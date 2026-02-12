@@ -1,4 +1,4 @@
-package forzaquattro;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;
