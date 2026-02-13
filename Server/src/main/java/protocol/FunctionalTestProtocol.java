@@ -1,12 +1,20 @@
 package protocol;
 
+
+
+import java.util.ArrayList;
+
 import data.ClientList;
 
 public class FunctionalTestProtocol {
+	
+	private static ArrayList<String> list;
+	
 	public static void main(String[] args) {
+		
+		list = new ArrayList<String>();
+		
 		//Creazione di ogni possibile richiesta:
-		
-		
 		
 		toJsonTest(new ServerConnectionResult("Donati"));
 		toJsonTest(new ChangeUsernameRequest("user1234","Donati"));
@@ -20,14 +28,27 @@ public class FunctionalTestProtocol {
 		toJsonTest(new GameEnd("won","enemy_disconnected"));
 		toJsonTest(new Disconnect());
 		
+		
+		for(String json : list) {
+			toObjTest(json);
+		}
+		
 	}
 	
 	private static void toJsonTest(Message msg) {
 		
 		System.out.println("Json of : " + msg.getClass() + "\n");
-		System.out.println(MessageFormatterParser.toJson(msg));
+		list.add(MessageFormatterParser.toJson(msg));
+		System.out.println(list.getLast());
 		System.out.println("\n--------------------------------------------\n");
 		
+	}
+	
+	private static void toObjTest(String json) {
+		
+		System.out.print("the current file json in of type : ");
+		System.out.println(MessageFormatterParser.fromJson(json).getClass());
+		System.out.println("\n--------------------------------------------\n");
 	}
 	
 	private static ClientList clients(){

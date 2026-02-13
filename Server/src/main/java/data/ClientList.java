@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 public class ClientList implements Iterable<Client>{
 	
-	private List<Client> listOfClient;
+	private ArrayList<Client> listOfClient;
 	
 	public ClientList() {
 		listOfClient = new ArrayList<Client>();
@@ -52,10 +52,10 @@ public class ClientList implements Iterable<Client>{
 }
 
 class ClientIterator implements Iterator<Client>{
-	private List<Client> data;
+	private ArrayList<Client> data;
     private int index = 0;
     
-    public ClientIterator(List<Client> data) {
+    public ClientIterator(ArrayList<Client> data) {
     	this.data = data;
     }
     

@@ -6,6 +6,7 @@ public class GameEnd implements Message{
 	private String info;
 	
 	public GameEnd(String result, String info) {
+		this.type = "game_end";
 		this.result = result;
 		this.info = info;
 	}
