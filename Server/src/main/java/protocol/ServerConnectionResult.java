@@ -1,34 +1,44 @@
 package protocol;
 
-public class ServerConnectionResult implements Message{
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-	private String type = "server_connection_result";
-	private String username;
-	private 
-	
-	
-	public ServerConnectionResult() {
-		
-	}
-	
-	public ServerConnectionResult(String json) {
-		
-	}
-	
-	private generateUsername() {
-		
-	}
+public class ServerConnectionResult implements Message {
 
-	@Override
-	public String toJson() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private String type ;
+    private String username;
 
-	@Override
-	public String getType() {
-		// TODO Auto-generated method stub
-		return null;
+    public ServerConnectionResult(data.Client c) {
+    	this.type = "server_connection_result";
+        this.username = c.getUsername();
+    }
+
+    public ServerConnectionResult(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.readerForUpdating(this).readValue(json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public String toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+    
+    public String getUsername() {
+		return username;
 	}
-	
 }
