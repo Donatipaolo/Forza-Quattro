@@ -4,9 +4,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Iterator;
 
-
-public class ClientList {
+public class ClientList implements Iterable<Client>{
 	
 	private List<Client> listOfClient;
 	
@@ -44,8 +44,29 @@ public class ClientList {
 		return true;
 	}
 	
-
-	
-	
+	@Override
+    public Iterator<Client> iterator() {
+        return new ClientIterator(this.listOfClient);
+    }
 	
 }
+
+class ClientIterator implements Iterator<Client>{
+	private List<Client> data;
+    private int index = 0;
+    
+    public ClientIterator(List<Client> data) {
+    	this.data = data;
+    }
+    
+    @Override
+    public boolean hasNext() {
+        return index < data.size();
+    }
+
+    @Override
+    public Client next() {
+        return data.get(index++);
+    }
+    
+} 

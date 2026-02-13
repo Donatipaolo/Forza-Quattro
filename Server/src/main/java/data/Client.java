@@ -25,4 +25,8 @@ public class Client {
 	public String getUsername() {
 		return username;
 	}
+	
+	public Status getStatus() {
+		return this.status;
+	}
 }

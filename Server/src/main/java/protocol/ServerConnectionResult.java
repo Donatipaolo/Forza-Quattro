@@ -2,7 +2,7 @@ package protocol;
 
 public class ServerConnectionResult implements Message {
 
-    private String type ;
+    private String type;
     private String username;
 
     public ServerConnectionResult(String username) {
