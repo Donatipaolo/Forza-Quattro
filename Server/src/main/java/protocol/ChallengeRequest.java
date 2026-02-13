@@ -4,6 +4,8 @@ public class ChallengeRequest implements Message{
 	private String type;
 	private String username;
 	
+	public ChallengeRequest() {}
+	
 	public ChallengeRequest(String username) {
 		this.type = "challenge_request";
 		this.username = username;
@@ -12,6 +14,10 @@ public class ChallengeRequest implements Message{
 	@Override
 	public String getType() {
 		return this.type;
+	}
+	
+	public String getUsername() {
+		return this.username;
 	}
 	
 }

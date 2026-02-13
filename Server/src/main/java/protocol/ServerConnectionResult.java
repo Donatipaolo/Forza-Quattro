@@ -10,9 +10,15 @@ public class ServerConnectionResult implements Message {
         this.username = username;
     }
     
+    public ServerConnectionResult() {}
+    
     public String getType() {
 		return this.type;
 	}
+    
+    public String getUsername() {
+    	return this.username;
+    }
     
     /*private String generateUsername() {
     	Random random = new Random();

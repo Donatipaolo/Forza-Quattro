@@ -10,6 +10,8 @@ public class PlayListResponse implements Message{
 	private String type;
 	private List<Player> listOfPlayer;
 	
+	public PlayListResponse() {}
+	
 	public PlayListResponse(ClientList list) {
 		this.type = "play_list_response";
 		listOfPlayer = new ArrayList<Player>();
@@ -25,5 +27,7 @@ public class PlayListResponse implements Message{
 		return this.type;
 	}
 
-	
+	public List<Player> getListOfPlayer(){
+		return this.listOfPlayer;
+	}
 }

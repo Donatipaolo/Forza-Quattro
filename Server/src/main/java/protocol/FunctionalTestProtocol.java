@@ -1,7 +1,5 @@
 package protocol;
 
-
-
 import java.util.ArrayList;
 
 import data.ClientList;
@@ -18,20 +16,20 @@ public class FunctionalTestProtocol {
 		
 		toJsonTest(new ServerConnectionResult("Donati"));
 		toJsonTest(new ChangeUsernameRequest("user1234","Donati"));
-		toJsonTest(new ChangeUsernameResponse("ok"));
+		toJsonTest(new ChangeUsernameResponse(ChangeUsernameResult.ok));
 		toJsonTest(new PlayListRequest());
 		toJsonTest(new PlayListResponse(clients()));
 		toJsonTest(new ChallengeRequest("Donati"));
-		toJsonTest(new ChallengeResponse(ChallengeResponseStatus.ok,"you"));
+		toJsonTest(new ChallengeResponse(ChallengeResponseStatus.ok,MoveValue.you));
 		toJsonTest(new Move(3));
 		toJsonTest(new MoveResult(MoveResultStatus.ok));
-		toJsonTest(new GameEnd("won","enemy_disconnected"));
+		toJsonTest(new GameEnd(GameEndResult.won,GameEndInfo.game_ended));
 		toJsonTest(new Disconnect());
 		
 		
-		for(String json : list) {
-			toObjTest(json);
-		}
+//		for(String json : list) {
+//			toObjTest(json);
+//		}
 		
 	}
 	

@@ -6,13 +6,24 @@ public class ChangeUsernameRequest implements Message{
 	private String old_username;
 	private String new_username;
 	
+	public ChangeUsernameRequest() {}
+	
 	public ChangeUsernameRequest(String old_username, String new_username) {
 		this.type = "change_username_request";
 		this.old_username = old_username;
 		this.new_username = new_username;
 	}
 	
+	@Override
 	public String getType() {
 		return this.type;
+	}
+	
+	public String getOldUsername() {
+		return this.old_username;
+	}
+	
+	public String getNewUsername() {
+		return this.new_username;
 	}
 }
