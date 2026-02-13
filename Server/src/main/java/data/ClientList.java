@@ -8,14 +8,14 @@ import java.util.Random;
 
 public class ClientList {
 	
-	List<Client> listOfClient;
+	private List<Client> listOfClient;
 	
 	public ClientList() {
 		listOfClient = new ArrayList<Client>();
 	}
 	
-	public synchronized void addClient(Socket socket) {
-		listOfClient.add(new Client(socket, generateUsername()));
+	public synchronized void addClient(Socket socket, String username) {
+		listOfClient.add(new Client(socket, username));
 	}
 	
 	public synchronized void removeClient(String username) {
@@ -35,25 +35,17 @@ public class ClientList {
 		return null;
 	}
 	
-
-	private String generateUsername() {
-	    Random random = new Random();
-	    String username;
-	    do {
-	        username = "username" + String.format("%05d", random.nextInt(100000));
-	    } while (!isUsernameUnique(username));
-	    return username;
-	}
-
-	
 	public boolean isUsernameUnique(String username) {
-		for(int i = 0; i < listOfClient.size(); i++) {
-			if(listOfClient.get(i).getUsername().equals(username)) {
+		for(Client c : listOfClient) {
+			if(c.getUsername().equals(username)) {
 				return false;
 			}
 		}
 		return true;
 	}
+	
+
+	
 	
 	
 }

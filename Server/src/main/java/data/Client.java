@@ -3,8 +3,8 @@ package data;
 import java.net.Socket;
 
 enum Status{
-	Free,
-	InGame
+	free,
+	in_game
 }
 
 public class Client {
@@ -15,10 +15,10 @@ public class Client {
 	public Client(Socket socket,String username) {
 		this.socket = socket;
 		this.username = username;
-		status = Status.Free;
+		status = Status.free;
 	}
 	
-	public void changeUsername(String username) {
+	public void setUsername(String username) {
 		this.username = username;
 	}
 	
