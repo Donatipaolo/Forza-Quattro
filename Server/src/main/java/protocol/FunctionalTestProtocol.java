@@ -27,9 +27,9 @@ public class FunctionalTestProtocol {
 		toJsonTest(new Disconnect());
 		
 		
-//		for(String json : list) {
-//			toObjTest(json);
-//		}
+		for(String json : list) {
+			toObjTest(json);
+		}
 		
 	}
 	
@@ -37,7 +37,7 @@ public class FunctionalTestProtocol {
 		
 		System.out.println("Json of : " + msg.getClass() + "\n");
 		list.add(MessageFormatterParser.toJson(msg));
-		System.out.println(list.getLast());
+		System.out.println(list.get(list.size()-1));
 		System.out.println("\n--------------------------------------------\n");
 		
 	}

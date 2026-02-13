@@ -36,4 +36,16 @@ public class GameEnd implements Message{
 	public GameEndInfo getInfo() {
 		return this.info;
 	}
+	
+	public void setType() {
+		this.type = "game_end";
+	}
+	
+	public void setResult(GameEndResult result) {
+		this.result = result;
+	}
+	
+	public void setInfor(GameEndInfo info) {
+		this.info = info;
+	}
 }

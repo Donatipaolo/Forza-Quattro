@@ -5,12 +5,16 @@ public class Disconnect implements Message{
 	
 	
 	public Disconnect() {
-		type = "disconnect";
+		this.type = "disconnect";
 	}
 	
 	@Override
 	public String getType() {
 		return this.type;
+	}
+	
+	public void setType() {
+		this.type = "disconnect";
 	}
 	
 }

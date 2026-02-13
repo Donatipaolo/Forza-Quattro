@@ -27,4 +27,12 @@ public class ChangeUsernameResponse implements Message{
 	public ChangeUsernameResult getStatus() {
 		return this.status;
 	}
+	
+	public void setType() {
+		this.type = "change_username_response";
+	}
+	
+	public void setStatus(ChangeUsernameResult status) {
+		this.status = status;
+	}
 }

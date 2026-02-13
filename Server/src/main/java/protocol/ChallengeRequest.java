@@ -20,4 +20,11 @@ public class ChallengeRequest implements Message{
 		return this.username;
 	}
 	
+	public void setType() {
+		this.type = "challenge_request";
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
 }

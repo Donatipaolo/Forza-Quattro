@@ -25,4 +25,12 @@ public class MoveResult implements Message{
 	public MoveResultStatus getStatus() {
 		return this.status;
 	}
+	
+	public void setType() {
+		this.type = "move_response";
+	}
+	
+	public void setStatus(MoveResultStatus status) {
+		this.status = status;
+	}
 }

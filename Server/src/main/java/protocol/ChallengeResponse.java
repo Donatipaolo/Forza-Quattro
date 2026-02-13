@@ -18,7 +18,7 @@ public class ChallengeResponse implements Message{
 	
 	public ChallengeResponse() {}
 	
-	public ChallengeResponse(ChallengeResponseStatus status,MoveValue first_move) {
+	public ChallengeResponse(ChallengeResponseStatus status, MoveValue first_move) {
 		this.type = "challenge_response";
 		this.status = status;
 		this.first_move = first_move;
@@ -35,5 +35,17 @@ public class ChallengeResponse implements Message{
 	
 	public MoveValue getFirstMove() {
 		return this.first_move;
+	}
+	
+	public void setType() {
+		this.type = "challenge_response";
+	}
+	
+	public void setStatus(ChallengeResponseStatus status) {
+		this.status = status;
+	}
+	
+	public void setFirstMove(MoveValue first_move) {
+		this.first_move = first_move;
 	}
 }

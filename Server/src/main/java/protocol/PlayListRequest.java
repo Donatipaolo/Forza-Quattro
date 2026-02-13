@@ -11,5 +11,7 @@ public class PlayListRequest implements Message{
 	public String getType() {
 		return this.type;
 	}
-
+	public void setType() {
+		this.type = "play_list_request";
+	}
 }

@@ -7,7 +7,7 @@ public class Move implements Message{
 	public Move() {}
 	
 	public Move(int column) {
-		this.type = "move_response";
+		this.type = "move";
 		this.column = column;
 	}
 	
@@ -18,5 +18,13 @@ public class Move implements Message{
 	
 	public int getColumn() {
 		return column;
+	}
+	
+	public void setType() {
+		this.type = "move";
+	}
+	
+	public void setColumn(int column) {
+		this.column = column;
 	}
 }

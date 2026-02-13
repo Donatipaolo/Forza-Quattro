@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MessageFormatterParser {
 	
-	
 	public static String toJson(Message msg) {
         ObjectMapper mapper = new ObjectMapper();
         try {

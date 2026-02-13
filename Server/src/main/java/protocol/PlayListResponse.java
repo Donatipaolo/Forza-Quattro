@@ -30,4 +30,13 @@ public class PlayListResponse implements Message{
 	public List<Player> getListOfPlayer(){
 		return this.listOfPlayer;
 	}
+	
+	public void setType() {
+		this.type = "play_list_response";
+	}
+	
+	public void setListOfPlayer(List<Player> listOfPlayer) {
+		this.listOfPlayer = listOfPlayer;
+		
+	}
 }
