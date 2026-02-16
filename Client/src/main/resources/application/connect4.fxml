@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="application.GameController"
+            prefWidth="900" prefHeight="700"
+            styleClass="root">
+
+    <center>
+        <StackPane alignment="CENTER">
+            <GridPane fx:id="grid"
+                      alignment="CENTER"
+                      hgap="10"
+                      vgap="10"
+                      styleClass="game-grid"/>
+        </StackPane>
+    </center>
+
+</BorderPane>

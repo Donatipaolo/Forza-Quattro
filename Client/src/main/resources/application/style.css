@@ -1,0 +1,32 @@
+.root {
+    -fx-background-color: linear-gradient(to bottom, #1e1e2f, #2a2a40);
+}
+
+.game-grid {
+    -fx-padding: 30;
+}
+
+.cell {
+    -fx-background-color: #304ffe;
+    -fx-background-radius: 15;
+    -fx-min-width: 90;
+    -fx-min-height: 90;
+    -fx-pref-width: 100;
+    -fx-pref-height: 100;
+}
+
+.cell-hover {
+    -fx-background-color: #536dfe;
+}
+
+.hole {
+    -fx-fill: #1e1e2f;
+}
+
+.player1 {
+    -fx-fill: #ff5252;
+}
+
+.player2 {
+    -fx-fill: #ffd740;
+}
