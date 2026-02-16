@@ -11,6 +11,8 @@
     </dependency>
   </dependencies>
   
-  
-
+	<modules>
+        <module>Server</module>
+        <module>Client</module>
+    </modules>
 </project>
