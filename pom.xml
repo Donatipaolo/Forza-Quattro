@@ -3,6 +3,7 @@
   <groupId>Forza-Quattro</groupId>
   <artifactId>Forza-Quattro</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  
   <dependencies>
   <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -10,6 +11,8 @@
       <version>2.15.2</version>
     </dependency>
   </dependencies>
+  
+  <packaging>pom</packaging>
   
 	<modules>
         <module>Server</module>
