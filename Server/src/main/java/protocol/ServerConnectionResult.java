@@ -31,18 +31,6 @@ public class ServerConnectionResult implements Message {
     	this.username = username;
     }
     
-    /*private String generateUsername() {
-=======
-/*
-    private String generateUsername() {
->>>>>>> Stashed changes
-    	Random random = new Random();
-	    String username;
-	    do {
-	        username = "username" + String.format("%05d", random.nextInt(100000));
-	    } while (!list.isUsernameUnique(username));
-	    return username;
-	}
-*/
+
 
 }

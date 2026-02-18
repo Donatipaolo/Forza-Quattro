@@ -35,6 +35,10 @@ public class ClientList implements Iterable<Client>{
 		return null;
 	}
 	
+	public Client getLastClient() {
+		return listOfClient.getLast();
+	}
+	
 	public boolean isUsernameUnique(String username) {
 		for(Client c : listOfClient) {
 			if(c.getUsername().equals(username)) {
