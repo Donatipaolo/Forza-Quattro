@@ -48,6 +48,15 @@ public class ClientList implements Iterable<Client>{
 		return true;
 	}
 	
+	public boolean isClientInList(String username) {
+		for(Client c : listOfClient) {
+			if(c.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Override
     public Iterator<Client> iterator() {
         return new ClientIterator(this.listOfClient);

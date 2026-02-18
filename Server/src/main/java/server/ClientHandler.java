@@ -53,7 +53,10 @@ public class ClientHandler extends Thread implements Runnable{
 			
 			Message msgResponse = LobbyManager.handleMessage(msgReply, client, gameSession);
 			
-			out.print(MessageFormatterParser.toJson(msgResponse));
+			if(msgResponse != null) {
+				out.print(MessageFormatterParser.toJson(msgResponse));
+			}
+			
 
 		}
 	}

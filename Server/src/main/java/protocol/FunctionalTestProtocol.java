@@ -22,7 +22,7 @@ public class FunctionalTestProtocol {
 		toJsonTest(new PlayListRequest());
 		toJsonTest(new PlayListResponse(clients()));
 		toJsonTest(new ChallengeRequest("Donati"));
-		toJsonTest(new ChallengeResponse(ChallengeResponseStatus.ok,MoveValue.you));
+		toJsonTest(new ChallengeResponse(ChallengeResponseStatus.ok,MoveValue.you,"Canocchi"));
 		toJsonTest(new Move(3));
 		toJsonTest(new MoveResult(MoveResultStatus.ok));
 		toJsonTest(new GameEnd(GameEndResult.won,GameEndInfo.game_ended));

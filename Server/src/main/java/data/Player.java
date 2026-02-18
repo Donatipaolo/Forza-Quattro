@@ -1,5 +1,7 @@
 package data;
 
+import enums.Status;
+
 public class Player {
 
     private String username;

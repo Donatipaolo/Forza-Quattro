@@ -24,7 +24,7 @@ public class LobbyManager {
                 return handleChallengeRequest(msg);
 
             case challenge_response:
-                return handleChallengeResponse(msg);
+                return handleChallengeResponse(msg, client);
 
             case move:
                 return handleMove(msg);
@@ -39,36 +39,40 @@ public class LobbyManager {
 		
 	}
 	
-	private static boolean isUsernameInList(String username) {
-		for(Client c : clientList) {
-			if(c.getUsername().equals(username)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	private static ChangeUsernameResponse handleChangeUsernameRequest(Message generalMsg, Client c) {
 		ChangeUsernameRequest msg = (ChangeUsernameRequest) generalMsg;
 		String new_username = msg.getNewUsername();
 		
-		if(isUsernameInList(new_username)) {
+		if(clientList.isClientInList(new_username)) {
 			return (new ChangeUsernameResponse(ChangeUsernameResult.taken));
 		}
 		
 		c.setUsername(new_username);
 		return (new ChangeUsernameResponse(ChangeUsernameResult.ok));
-
 	}
 
 	
-	private static Message handleChallengeRequest(Message msg) {
-		// TODO Auto-generated method stub
-		return null;
+	private static Message handleChallengeRequest(Message generalMsg) {
+		ChallengeRequest msg = (ChallengeRequest) generalMsg;
+		String username = msg.getUsername();
+		
+		Client c = clientList.getClient(username);
+		
+		c.getOut().print(msg);
+
+		return null;		
 	}
 	
-	private static Message handleChallengeResponse(Message msg) {
-		// TODO Auto-generated method stub
+	private static Message handleChallengeResponse(Message generalMsg, Client c) {
+		ChallengeResponse msg = (ChallengeResponse) generalMsg;
+		Client enemy = clientList.getClient(msg.getUsername());
+		Client starter = (msg.getFirstMove() == MoveValue.you) ? c : enemy;
+
+		if(c.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free) ) {
+			GameSession gameSession = new GameSession(c, enemy, starter);
+		}
+		
 		return null;
 	}
 
