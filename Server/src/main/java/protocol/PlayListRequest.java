@@ -1,17 +1,19 @@
 package protocol;
 
+import enums.MessageType;
+
 public class PlayListRequest implements Message{
 	
-	private String type;
+	private MessageType type;
 	
 	public PlayListRequest() {
-		this.type = "play_list_request";
+		this.type = MessageType.play_list_request;
 	}
 	
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 	public void setType() {
-		this.type = "play_list_request";
+		this.type = MessageType.play_list_request;
 	}
 }

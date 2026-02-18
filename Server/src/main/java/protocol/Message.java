@@ -3,6 +3,8 @@ package protocol;
 import com.fasterxml.jackson.annotation.JsonSubTypes; 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import enums.MessageType;
+
 @JsonTypeInfo(
 	    use = JsonTypeInfo.Id.NAME,
 	    include = JsonTypeInfo.As.EXISTING_PROPERTY,
@@ -24,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = Disconnect.class, name = "disconnect")
 })
 
+
+
 public interface Message {
 	
-	public String getType();
+	public MessageType getType();
 }
 

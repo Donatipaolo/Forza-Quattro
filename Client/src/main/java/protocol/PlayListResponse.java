@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import data.*;
+import enums.MessageType;
 
 public class PlayListResponse implements Message{
 	
-	private String type;
+	private MessageType type;
 	private List<Player> listOfPlayer;
 	
 	public PlayListResponse() {}
-	
+
 	
 	@Override
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 
@@ -23,7 +24,7 @@ public class PlayListResponse implements Message{
 	}
 	
 	public void setType() {
-		this.type = "play_list_response";
+		this.type = MessageType.play_list_response;
 	}
 	
 	public void setListOfPlayer(List<Player> listOfPlayer) {

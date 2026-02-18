@@ -2,20 +2,22 @@ package protocol;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import enums.MessageType;
+
 public class ServerConnectionResult implements Message {
 
-    private String type;
+    private MessageType type;
     private String username;
     
     
     public ServerConnectionResult(String username) {
-    	this.type = "server_connection_result";
+    	this.type = MessageType.server_connection_result;
         this.username = username;
     }
     
     public ServerConnectionResult() {}
     
-    public String getType() {
+    public MessageType getType() {
 		return this.type;
 	}
     
@@ -24,7 +26,7 @@ public class ServerConnectionResult implements Message {
     }
     
     public void setType() {
-		this.type = "server_connection_result";
+		this.type = MessageType.server_connection_result;
 	}
     
     public void setUsername(String username) {

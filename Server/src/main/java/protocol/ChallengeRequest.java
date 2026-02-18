@@ -1,18 +1,20 @@
 package protocol;
 
+import enums.MessageType;
+
 public class ChallengeRequest implements Message{
-	private String type;
+	private MessageType type;
 	private String username;
 	
 	public ChallengeRequest() {}
 	
 	public ChallengeRequest(String username) {
-		this.type = "challenge_request";
+		this.type = MessageType.challenge_request;
 		this.username = username;
 	}
 	
 	@Override
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 	
@@ -21,7 +23,7 @@ public class ChallengeRequest implements Message{
 	}
 	
 	public void setType() {
-		this.type = "challenge_request";
+		this.type = MessageType.challenge_request;
 	}
 	
 	public void setUsername(String username) {

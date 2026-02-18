@@ -1,5 +1,7 @@
 package protocol;
 
+import enums.MessageType;
+
 enum MoveResultStatus{
 	ok,
 	invalid_move,
@@ -7,18 +9,18 @@ enum MoveResultStatus{
 }
 
 public class MoveResult implements Message{
-	private String type;
+	private MessageType type;
 	private MoveResultStatus status;
 	
 	public MoveResult() {}
 	
 	public MoveResult(MoveResultStatus status) {
-		this.type = "move_response";
+		this.type = MessageType.move_response;
 		this.status = status;
 	}
 	
 	@Override
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 	
@@ -27,7 +29,7 @@ public class MoveResult implements Message{
 	}
 	
 	public void setType() {
-		this.type = "move_response";
+		this.type = MessageType.move_response;
 	}
 	
 	public void setStatus(MoveResultStatus status) {

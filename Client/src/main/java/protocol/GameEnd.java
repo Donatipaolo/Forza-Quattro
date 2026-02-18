@@ -1,31 +1,22 @@
 package protocol;
 
-enum GameEndResult{
-	won,
-	tie,
-	defeat
-}
-
-enum GameEndInfo{
-	game_ended,
-	enemy_disconnected
-}
+import enums.*;
 
 public class GameEnd implements Message{
-	private String type;
+	private MessageType type;
 	private GameEndResult result;
 	private GameEndInfo info;
 	
 	public GameEnd() {}
 	
 	public GameEnd(GameEndResult result, GameEndInfo info) {
-		this.type = "game_end";
+		this.type = MessageType.game_end;
 		this.result = result;
 		this.info = info;
 	}
 	
 	@Override
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 	
@@ -38,7 +29,7 @@ public class GameEnd implements Message{
 	}
 	
 	public void setType() {
-		this.type = "game_end";
+		this.type = MessageType.game_end;
 	}
 	
 	public void setResult(GameEndResult result) {

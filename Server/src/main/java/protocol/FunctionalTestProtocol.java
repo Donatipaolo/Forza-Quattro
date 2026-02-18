@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import data.ClientList;
 
+import enums.*;
+
 public class FunctionalTestProtocol {
 	
 	private static ArrayList<String> list;
@@ -15,7 +17,7 @@ public class FunctionalTestProtocol {
 		//Creazione di ogni possibile richiesta:
 		
 		toJsonTest(new ServerConnectionResult("Donati"));
-		toJsonTest(new ChangeUsernameRequest("user1234","Donati"));
+		toJsonTest(new ChangeUsernameRequest("Donati"));
 		toJsonTest(new ChangeUsernameResponse(ChangeUsernameResult.ok));
 		toJsonTest(new PlayListRequest());
 		toJsonTest(new PlayListResponse(clients()));

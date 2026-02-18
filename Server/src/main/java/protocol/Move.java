@@ -1,18 +1,20 @@
 package protocol;
 
+import enums.MessageType;
+
 public class Move implements Message{
-	private String type;
+	private MessageType type;
 	private int column;
 	
 	public Move() {}
 	
 	public Move(int column) {
-		this.type = "move";
+		this.type = MessageType.move;
 		this.column = column;
 	}
 	
 	@Override
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 	
@@ -21,7 +23,7 @@ public class Move implements Message{
 	}
 	
 	public void setType() {
-		this.type = "move";
+		this.type = MessageType.move;
 	}
 	
 	public void setColumn(int column) {

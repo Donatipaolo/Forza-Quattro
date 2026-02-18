@@ -1,20 +1,22 @@
 package protocol;
 
+import enums.MessageType;
+
 public class Disconnect implements Message{
-	private String type;
+	private MessageType type;
 	
 	
 	public Disconnect() {
-		this.type = "disconnect";
+		this.type = MessageType.disconnect;
 	}
 	
 	@Override
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 	
 	public void setType() {
-		this.type = "disconnect";
+		this.type = MessageType.disconnect;
 	}
 	
 }

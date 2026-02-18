@@ -9,6 +9,7 @@ import java.net.Socket;
 import data.Client;
 import protocol.Message;
 import protocol.MessageFormatterParser;
+import protocol.ServerConnectionResult;
 
 public class ClientHandler extends Thread implements Runnable{
 
@@ -42,12 +43,15 @@ public class ClientHandler extends Thread implements Runnable{
 	}
 	
 	public void clientHandler() throws IOException{
+		// invio il messaggio di inizializzazione della connessione
+		out.print(MessageFormatterParser.toJson(new ServerConnectionResult(client.getUsername())));
 		
+		// ciclo lettura richiesta ed elaborazione risposta
 		while(true) {
 			String inputJson = in.readLine();
 			Message msgReply = MessageFormatterParser.fromJson(inputJson);
 			
-			Message msgResponse = LobbyManager.handleMessage(msgReply);
+			Message msgResponse = LobbyManager.handleMessage(msgReply, client, gameSession);
 			
 			out.print(MessageFormatterParser.toJson(msgResponse));
 

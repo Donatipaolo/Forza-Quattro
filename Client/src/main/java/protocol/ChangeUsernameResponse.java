@@ -1,26 +1,21 @@
 package protocol;
 
-enum ChangeUsernameResult{
-	ok,
-	invalid,
-	taken
-}
-
+import enums.*;
 
 public class ChangeUsernameResponse implements Message{
 	
-	private String type;
+	private MessageType type;
 	private ChangeUsernameResult status;
 	
 	public ChangeUsernameResponse() {}
 	
 	public ChangeUsernameResponse(ChangeUsernameResult status) {
-		this.type = "change_username_response";
+		this.type = MessageType.change_username_response;
 		this.status = status;
 	}
 
 	@Override
-	public String getType() {
+	public MessageType getType() {
 		return this.type;
 	}
 	
@@ -29,7 +24,7 @@ public class ChangeUsernameResponse implements Message{
 	}
 	
 	public void setType() {
-		this.type = "change_username_response";
+		this.type = MessageType.change_username_response;
 	}
 	
 	public void setStatus(ChangeUsernameResult status) {
