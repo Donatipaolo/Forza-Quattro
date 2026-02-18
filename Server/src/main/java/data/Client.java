@@ -18,7 +18,7 @@ public class Client {
 		status = Status.free;
 	}
 	
-	public void setUsername(String username) {
+	public synchronized void setUsername(String username) {
 		this.username = username;
 	}
 	
@@ -28,5 +28,13 @@ public class Client {
 	
 	public Status getStatus() {
 		return this.status;
+	}
+	
+	public synchronized void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	public Socket getSocket() {
+		return this.socket;
 	}
 }
