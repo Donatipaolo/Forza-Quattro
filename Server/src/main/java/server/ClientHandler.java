@@ -140,25 +140,30 @@ public class ClientHandler extends Thread implements Runnable{
 		
 		Client enemy = clientList.getClient(msg.getUsername());
 		
-		// Controllo se il client è ancora online
+		// Controllo se il client è ancora online e se c'è un effettiva richiesta
 		if(enemy == null || pendingRequestList.isInPendingRequestList(client, enemy)) {
 			pendingRequestList.remove(client,enemy);
 			return new ChallengeResult(ChallengeResultStatus.client_not_found,MoveValue.none,enemy.getUsername());
 		}
 		
-		// Controllo se per caso il client che accetta è gia in un altra partita
-		if(!(client.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free)) ) {
-			pendingRequestList.remove(client,enemy);
-			return new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,enemy.getUsername());
+		// Controllo gli stati dei due giocatori coinvolti e li aggiorno
+		synchronized(clientList) {
+			if(!(client.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free)) ) {
+				pendingRequestList.remove(client,enemy);
+				return new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,enemy.getUsername());
+			} 
+			client.setStatus(Status.in_game);
+			enemy.setStatus(Status.in_game);
 		}
 		
-		//Altrimenti creo la nuova game session e avvio la partita
-		gameSession = new GameSession(client, enemy);
 		
-		enemy.getOut().print( new ChallengeResult(ChallengeResultStatus.ac,MoveValue.other,enemy.getUsername())
+		// Creo la nuova game session e avvio la partita
 		
+		// Manca la game Session
 		
-		return null;
+		enemy.getOut().print( new ChallengeResult(ChallengeResultStatus.ok,MoveValue.other,client.getUsername()));
+		
+		return new ChallengeResult(ChallengeResultStatus.ok,MoveValue.you,enemy.getUsername());
 	}
 	
 	
