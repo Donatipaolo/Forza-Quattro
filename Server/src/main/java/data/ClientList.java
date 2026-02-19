@@ -62,6 +62,15 @@ public class ClientList implements Iterable<Client>{
         return new ClientIterator(this.listOfClient);
     }
 	
+    public ArrayList<Player> getPlayerList()  {
+		ArrayList<Player> listOfPlayer = new ArrayList<Player>();
+		
+		for(Client client : this.listOfClient) {
+			listOfPlayer.add(new Player(client.getUsername(),client.getStatus()));	
+		
+		}
+		return listOfPlayer;
+    }
 }
 
 class ClientIterator implements Iterator<Client>{
@@ -82,4 +91,6 @@ class ClientIterator implements Iterator<Client>{
         return data.get(index++);
     }
     
+    
+
 } 

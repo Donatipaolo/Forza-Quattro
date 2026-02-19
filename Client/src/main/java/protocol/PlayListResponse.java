@@ -12,7 +12,10 @@ public class PlayListResponse implements Message{
 	private List<Player> listOfPlayer;
 	
 	public PlayListResponse() {}
-
+	
+	public PlayListResponse(ArrayList<Player> list) {
+		this.listOfPlayer = list;
+	}
 	
 	@Override
 	public MessageType getType() {

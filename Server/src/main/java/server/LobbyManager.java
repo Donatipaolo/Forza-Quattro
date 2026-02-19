@@ -4,11 +4,15 @@ import protocol.*;
 import data.*;
 import enums.*;
 
+/*
+ * Allora tutti questi metodi devono essere nella classe clientHandler, ci deve essere una varibile per lo stato, in game oin lobby e in 
+ * base alla variabile chiamo handleMessageGame o handleMessageLobby
+ */
 public class LobbyManager {
 	
 	public static ClientList clientList = null;
 	
-	public static Message handleMessage(Message msg, Client client, GameSession gameSession) {
+	public static Message handleMessageGame(Message msg, Client client, GameSession gameSession) {
 		
 		MessageType msgType = msg.getType();
 
@@ -18,7 +22,7 @@ public class LobbyManager {
                 return handleChangeUsernameRequest(msg, client);
 
             case play_list_request:
-                return new PlayListResponse(clientList);
+                return new PlayListResponse(clientList.getPlayerList());
 
             case challenge_request:
                 return handleChallengeRequest(msg);
@@ -53,20 +57,29 @@ public class LobbyManager {
 	}
 
 	
-	private static Message handleChallengeRequest(Message generalMsg) {
+	private static ChallengeResult handleChallengeRequest(Message generalMsg) {
 		ChallengeRequest msg = (ChallengeRequest) generalMsg;
 		String username = msg.getUsername();
 		
-		Client c = clientList.getClient(username);
+		Client enemy = clientList.getClient(username);
+		if(enemy == null) {
+			return (new ChallengeResult(ChallengeResultStatus.client_not_found, MoveValue.none, username));
+		}
 		
-		c.getOut().print(msg);
+		enemy.getOut().print(msg);
 
 		return null;		
 	}
 	
 	private static Message handleChallengeResponse(Message generalMsg, Client c) {
 		ChallengeResponse msg = (ChallengeResponse) generalMsg;
+		
 		Client enemy = clientList.getClient(msg.getUsername());
+		
+		if(enemy == null) {
+			return new ChallengeResult(ChallengeResultStatus.client_not_found,MoveValue.none,enemy.getUsername());
+		}
+		
 		Client starter = (msg.getFirstMove() == MoveValue.you) ? c : enemy;
 
 		if(c.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free) ) {

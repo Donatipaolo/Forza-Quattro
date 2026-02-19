@@ -13,14 +13,8 @@ public class PlayListResponse implements Message{
 	
 	public PlayListResponse() {}
 	
-	public PlayListResponse(ClientList list) {
-		this.type = MessageType.play_list_response;
-		listOfPlayer = new ArrayList<Player>();
-		
-		for(Client client : list) {
-			listOfPlayer.add(new Player(client.getUsername(),client.getStatus()));	
-		
-		}
+	public PlayListResponse(ArrayList<Player> list) {
+		this.listOfPlayer = list;
 	}
 	
 	@Override

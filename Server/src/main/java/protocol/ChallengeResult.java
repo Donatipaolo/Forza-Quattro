@@ -2,17 +2,19 @@ package protocol;
 
 import enums.*;
 
-public class ChallengeResponse implements Message{
+public class ChallengeResult implements Message{
 	private MessageType type;
-	private ChallengeResponseStatus status;
+	private ChallengeResultStatus status;
+	private MoveValue firstMove;
 	private String username;
 	
-	public ChallengeResponse() {}
+	public ChallengeResult() {}
 	
-	public ChallengeResponse(ChallengeResponseStatus status, String username) {
+	public ChallengeResult(ChallengeResultStatus status, MoveValue firstMove, String username) {
 		this.type = MessageType.challenge_response;
 		this.status = status;
 		this.username = username;
+		this.firstMove =firstMove;
 	}
 	
 	@Override
@@ -20,7 +22,7 @@ public class ChallengeResponse implements Message{
 		return this.type;
 	}
 	
-	public ChallengeResponseStatus getStatus() {
+	public ChallengeResultStatus getStatus() {
 		return this.status;
 	}
 	
@@ -28,15 +30,23 @@ public class ChallengeResponse implements Message{
 		return this.username;
 	}
 	
+	public MoveValue getFirstMove() {
+		return this.firstMove;
+	}
+	
 	public void setType() {
 		this.type = MessageType.challenge_response;
 	}
 	
-	public void setStatus(ChallengeResponseStatus status) {
+	public void setStatus(ChallengeResultStatus status) {
 		this.status = status;
 	}
 	
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public void setFirtstMove(MoveValue firstMove) {
+		this.firstMove = firstMove;
 	}
 }

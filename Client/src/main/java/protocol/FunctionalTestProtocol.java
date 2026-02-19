@@ -2,7 +2,6 @@ package protocol;
 
 import java.util.ArrayList;
 
-
 import enums.*;
 
 public class FunctionalTestProtocol {
@@ -19,8 +18,9 @@ public class FunctionalTestProtocol {
 		toJsonTest(new ChangeUsernameRequest("Donati"));
 		toJsonTest(new ChangeUsernameResponse(ChangeUsernameResult.ok));
 		toJsonTest(new PlayListRequest());
+		toJsonTest(new PlayListResponse());
 		toJsonTest(new ChallengeRequest("Donati"));
-		toJsonTest(new ChallengeResponse(ChallengeResponseStatus.ok,MoveValue.you));
+		toJsonTest(new ChallengeResponse(ChallengeResponseStatus.ok,"Canocchi"));
 		toJsonTest(new Move(3));
 		toJsonTest(new MoveResult(MoveResultStatus.ok));
 		toJsonTest(new GameEnd(GameEndResult.won,GameEndInfo.game_ended));
