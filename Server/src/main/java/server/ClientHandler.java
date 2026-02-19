@@ -17,14 +17,12 @@ public class ClientHandler extends Thread implements Runnable{
 	public static PendingRequestList pendingRequestList = null;
 	
 	private Client client;
-	private Socket clientSocket;
 	private GameSession gameSession = null;
 	private boolean status = false;		//se false vuol dire che è in lobby, true che è in partita
 	
 	public ClientHandler(Client client) {
 		super();
 		this.client = client;
-		this.clientSocket = client.getSocket();
 		
 	}
 	
@@ -56,14 +54,14 @@ public class ClientHandler extends Thread implements Runnable{
 		}
 	}
 	
-	public Message handleMessageGame(Message msg) {
+	public Message handleMessageLobby(Message msg) {
 			
 			MessageType msgType = msg.getType();
 	
 	        switch (msgType) {
 	
 	            case change_username_request:
-	                return handleChangeUsernameRequest(msg, client);
+	                return handleChangeUsernameRequest(msg);
 	
 	            case play_list_request:
 	                return new PlayListResponse(clientList.getPlayerList());
@@ -72,7 +70,8 @@ public class ClientHandler extends Thread implements Runnable{
 	                return handleChallengeRequest(msg);
 	
 	            case challenge_response:
-	                return handleChallengeResponse(msg, client);
+	                return handleChallengeResponse(msg);
+	               
 	
 	            default:
 	                System.out.println("Unhandled message type: " + msgType);
@@ -80,7 +79,9 @@ public class ClientHandler extends Thread implements Runnable{
 	        }
 	}
 	
-	public Message handleMessageLobby(Message msg) {
+	
+
+	public Message handleMessageGame(Message msg) {
 		
 		MessageType msgType = msg.getType();
 
@@ -98,50 +99,74 @@ public class ClientHandler extends Thread implements Runnable{
         }
 }
 	
+	//
+	// Metodi per la gestione nella lobby
+	//
+	
 	private ChangeUsernameResponse handleChangeUsernameRequest(Message generalMsg) {
 		ChangeUsernameRequest msg = (ChangeUsernameRequest) generalMsg;
-		String new_username = msg.getNewUsername();
 		
-		if(clientList.isClientInList(new_username)) {
+		if(clientList.isClientInList(msg.getNewUsername())) {
 			return (new ChangeUsernameResponse(ChangeUsernameResult.taken));
 		}
 		
-		client.setUsername(new_username);
+		client.setUsername(msg.getNewUsername());
 		return (new ChangeUsernameResponse(ChangeUsernameResult.ok));
 	}
 
 	
 	private ChallengeResult handleChallengeRequest(Message generalMsg) {
 		ChallengeRequest msg = (ChallengeRequest) generalMsg;
-		String username = msg.getUsername();
 		
-		Client enemy = clientList.getClient(username);
+		Client enemy = clientList.getClient(msg.getUsername());
+		
 		if(enemy == null) {
-			return (new ChallengeResult(ChallengeResultStatus.client_not_found, MoveValue.none, username));
+			return (new ChallengeResult(ChallengeResultStatus.client_not_found, MoveValue.none, msg.getUsername()));
 		}
 		
+		if(pendingRequestList.isInPendingRequestList(client, enemy)) {
+			return null;
+		}
+		
+		pendingRequestList.push(client, enemy);
 		enemy.getOut().print(msg);
 
 		return null;		
 	}
 	
-	private Message handleChallengeResponse(Message generalMsg, Client c) {
+	
+	private Message handleChallengeResponse(Message generalMsg) {
 		ChallengeResponse msg = (ChallengeResponse) generalMsg;
 		
 		Client enemy = clientList.getClient(msg.getUsername());
 		
-		if(enemy == null) {
+		// Controllo se il client è ancora online
+		if(enemy == null || pendingRequestList.isInPendingRequestList(client, enemy)) {
+			pendingRequestList.remove(client,enemy);
 			return new ChallengeResult(ChallengeResultStatus.client_not_found,MoveValue.none,enemy.getUsername());
 		}
 		
-		Client starter = (msg.getFirstMove() == MoveValue.you) ? c : enemy;
-
-		if(c.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free) ) {
-			GameSession gameSession = new GameSession(c, enemy, starter);
+		// Controllo se per caso il client che accetta è gia in un altra partita
+		if(!(client.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free)) ) {
+			pendingRequestList.remove(client,enemy);
+			return new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,enemy.getUsername());
 		}
+		
+		//Altrimenti creo la nuova game session e avvio la partita
+		gameSession = new GameSession(client, enemy);
+		
+		enemy.getOut().print( new ChallengeResult(ChallengeResultStatus.ac,MoveValue.other,enemy.getUsername())
+		
 		
 		return null;
 	}
+	
+	
+	
+	
+	//
+	// Metodi per la gestione in partita
+	//
 
 	private Message handleMove(Message msg) {
 		// TODO Auto-generated method stub

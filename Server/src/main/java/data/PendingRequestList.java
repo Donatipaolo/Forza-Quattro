@@ -14,7 +14,15 @@ public class PendingRequestList implements Iterable<PendingRequest>{
 		pendingRequestList.add(new PendingRequest(sender,destination));
 	}
 	
-	public synchronized ArrayList<PendingRequest> getPendingRequestBySender(Client sender) {
+	public synchronized void remove(Client sender, Client destination) {
+		for(PendingRequest p : pendingRequestList) {
+			if(p.getSender() == sender && p.getDestination() == destination) {
+				pendingRequestList.remove(p);
+			}
+		}
+	}
+	
+	public synchronized ArrayList<PendingRequest> getPendingRequestListBySender(Client sender) {
 		
 		ArrayList<PendingRequest> requests = new ArrayList<PendingRequest>();
 		for(PendingRequest p : pendingRequestList) {
@@ -26,7 +34,7 @@ public class PendingRequestList implements Iterable<PendingRequest>{
 		return requests;
 	}
 	
-	public synchronized ArrayList<PendingRequest> getPendingRequestByDestination(Client destination){
+	public synchronized ArrayList<PendingRequest> getPendingRequestListByDestination(Client destination){
 		ArrayList<PendingRequest> requests = new ArrayList<PendingRequest>();
 		for(PendingRequest p : pendingRequestList) {
 			if(p.getDestination() == destination) {
@@ -45,6 +53,16 @@ public class PendingRequestList implements Iterable<PendingRequest>{
 		}
 		
 		return null;
+	}
+	
+	public synchronized boolean isInPendingRequestList(Client sender, Client destination) {
+		for(PendingRequest p : pendingRequestList) {
+			if(p.getSender() == sender && p.getDestination() == destination) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	@Override

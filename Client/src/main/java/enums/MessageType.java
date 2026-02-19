@@ -8,6 +8,7 @@ public enum MessageType {
     play_list_response,
     challenge_request,
     challenge_response,
+    challenge_result,
     move,
     move_response,
     game_end,
