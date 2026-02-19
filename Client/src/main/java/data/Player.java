@@ -1,9 +1,6 @@
 package data;
 
-enum Status{
-	free,
-	in_game
-}
+import enums.Status;
 
 public class Player {
 

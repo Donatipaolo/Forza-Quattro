@@ -42,7 +42,7 @@ public class Grid {
 		
 	}
 	
-	public boolean isFinisched(Color color,int column) throws Exception {
+	public boolean isFinished(Color color,int column) throws Exception {
 		
 		int row = getLastElement(column);
 		

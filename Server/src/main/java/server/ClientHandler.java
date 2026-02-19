@@ -18,7 +18,7 @@ public class ClientHandler extends Thread implements Runnable{
 	
 	private Client client;
 	private GameSession gameSession = null;
-	private boolean status = false;		//se false vuol dire che è in lobby, true che è in partita
+	private Status status = Status.free;
 	
 	public ClientHandler(Client client) {
 		super();
@@ -41,13 +41,12 @@ public class ClientHandler extends Thread implements Runnable{
 		
 		// ciclo lettura richiesta ed elaborazione risposta
 		while(true) {
-			String inputJson = client.getIn().readLine();
-			Message msgReply = MessageFormatterParser.fromJson(inputJson);
 			
+			Message msgReply = client.read();
 			Message msgResponse = handleMessageGame(msgReply);
 			
 			if(msgResponse != null) {
-				client.getOut().print(MessageFormatterParser.toJson(msgResponse));
+				client.write(msgResponse);
 			}
 			
 

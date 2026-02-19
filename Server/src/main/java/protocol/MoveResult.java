@@ -1,12 +1,7 @@
 package protocol;
 
 import enums.MessageType;
-
-enum MoveResultStatus{
-	ok,
-	invalid_move,
-	not_your_turn
-}
+import enums.MoveResultStatus;
 
 public class MoveResult implements Message{
 	private MessageType type;

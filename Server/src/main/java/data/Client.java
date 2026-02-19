@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import enums.Status;
+import protocol.Message;
+import protocol.MessageFormatterParser;
 
 public class Client {
 	private String username;
@@ -45,6 +47,15 @@ public class Client {
 	
 	public Socket getSocket() {
 		return this.socket;
+	}
+	
+	public synchronized Message read() throws IOException {
+		String inputJson = in.readLine();
+		return MessageFormatterParser.fromJson(inputJson);
+	}
+	
+	public synchronized void write(Message msgResponse) throws IOException {
+		out.print(MessageFormatterParser.toJson(msgResponse));
 	}
 	
 	public BufferedReader getIn() {
