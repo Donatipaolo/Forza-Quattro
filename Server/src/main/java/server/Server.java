@@ -56,7 +56,8 @@ public class Server extends Thread implements Runnable{
 	private void handleNewClient(Socket clientSocket) {
 		//Creo il client e il thread che lo gestisce
 		this.clientList.addClient(clientSocket, createUsername());
-		new ClientHandler(clientList.getLastClient());
+		ClientHandler clientHandler = new ClientHandler(clientList.getLastClient());
+		clientHandler.start();
 	}
 	
 	private String createUsername() {

@@ -45,6 +45,11 @@ public class PendingRequestList implements Iterable<PendingRequest>{
 		return requests;
 	}
 	
+	public synchronized void removePendingRequest(PendingRequest pendingRequest) {
+		pendingRequestList.remove(pendingRequest);//TODO Spero funzioni
+		
+	}
+	
 	public synchronized PendingRequest getPendingRequest(Client sender, Client destination) {
 		for(PendingRequest p : pendingRequestList) {
 			if(p.getSender() == sender && p.getDestination() == destination) {
@@ -53,6 +58,17 @@ public class PendingRequestList implements Iterable<PendingRequest>{
 		}
 		
 		return null;
+	}
+	
+	public synchronized ArrayList<PendingRequest> getPendingRequestlist(Client client){
+		ArrayList<PendingRequest> requests = new ArrayList<PendingRequest>();
+		for(PendingRequest p : pendingRequestList) {
+			if(p.getSender() == client || p.getDestination() == client) {
+				requests.add(p);
+			}
+		}
+		
+		return requests;
 	}
 	
 	public synchronized boolean isInPendingRequestList(Client sender, Client destination) {

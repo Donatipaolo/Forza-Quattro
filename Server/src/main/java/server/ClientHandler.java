@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
 
 import data.*;
 import enums.*;
@@ -35,8 +36,19 @@ public class ClientHandler extends Thread implements Runnable{
 	}
 	
 	private void handleClientCrash() {
+	
+		//Elimino il client dalla lista dei client
+		clientList.removeClient(client.getUsername());
+	
+		
+		//Controllo le richieste pendenti riguardanti quel client e le elimino
+		for(PendingRequest p : pendingRequestList.getPendingRequestlist(this.client)) {
+			pendingRequestList.removePendingRequest(p);
+		}
+		
 	    GameSession session = client.getGameSession();
 
+	    //Controllo se il client è in una sessione
 	    if (session != null) {
 	        session.disconnection(client);
 	    } else {
@@ -54,8 +66,15 @@ public class ClientHandler extends Thread implements Runnable{
 		// ciclo lettura richiesta ed elaborazione risposta
 		while(true) {
 			
-			Message msgReply = client.read();
-			Message msgResponse = handleMessageGame(msgReply);
+			Message msgRequest = client.read();
+			Message msgResponse;
+			
+			if(this.status == Status.free) {
+				msgResponse = handleMessageLobby(msgRequest);
+			}
+			else {
+				msgResponse = handleMessageGame(msgRequest);
+			}
 			
 			if(msgResponse != null) {
 				client.write(msgResponse);
@@ -66,7 +85,8 @@ public class ClientHandler extends Thread implements Runnable{
 	}
 	
 	public Message handleMessageLobby(Message msg) {
-			
+
+		
 			MessageType msgType = msg.getType();
 	
 	        switch (msgType) {
@@ -117,6 +137,7 @@ public class ClientHandler extends Thread implements Runnable{
 	private ChangeUsernameResponse handleChangeUsernameRequest(Message generalMsg) {
 		ChangeUsernameRequest msg = (ChangeUsernameRequest) generalMsg;
 		
+		//Controllo che l'username non è stato già preso
 		if(clientList.isClientInList(msg.getNewUsername())) {
 			return (new ChangeUsernameResponse(ChangeUsernameResult.taken));
 		}
@@ -131,16 +152,22 @@ public class ClientHandler extends Thread implements Runnable{
 		
 		Client enemy = clientList.getClient(msg.getUsername());
 		
+		//Controllo che l'avversario esista
 		if(enemy == null) {
 			return (new ChallengeResult(ChallengeResultStatus.client_not_found, MoveValue.none, msg.getUsername()));
 		}
 		
+		//Controllo che la richiesta non esista di già all'interno delle lista di pending list
 		if(pendingRequestList.isInPendingRequestList(client, enemy)) {
 			return null;
 		}
 		
 		pendingRequestList.push(client, enemy);
-		enemy.getOut().print(msg);
+		try {
+			enemy.write(msg);
+		} catch (IOException e) {
+			//In caso il client non sia più disponibile il suo client handler si occuperà della pulizia
+		}
 
 		return null;		
 	}
@@ -159,31 +186,38 @@ public class ClientHandler extends Thread implements Runnable{
 		
 		// Controllo gli stati dei due giocatori coinvolti e li aggiorno
 		synchronized(clientList) {
+			
 			if(!(client.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free)) ) {
-				pendingRequestList.remove(client,enemy);
+				pendingRequestList.remove(client,enemy); //Rimuovo la richiesta
 				return new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,enemy.getUsername());
 			} 
+			
 			client.setStatus(Status.in_game);
 			enemy.setStatus(Status.in_game);
 		}
 		
-		// Creo la nuova game session
-		if(client.getGameSession() == null && enemy.getGameSession() == null) {
-			
-			GameSession gameSession = new GameSession(client, enemy, client);
-			
-			client.setGameSession(gameSession);
-			enemy.setGameSession(gameSession);
-			
-			// Cambio lo stato della game session
-			this.status = Status.in_game;
-		}
+		//Qui non è necessario inserire un blocco sincronizzato visto che una volta arrivato a questo punto i client sono 
+		//già nella modalità "in_game" e quindi non è possibile che una altra richiesta venga accettata
 		
+		//Estraggo il primo giocatore
+		Random random = new Random();
+		Client first = Math.abs(random.nextInt() % 2) == 0? client : enemy;
+		MoveValue clientMoveVale = first == client? MoveValue.you:MoveValue.other ;
+		MoveValue enemyMoveValue = first == enemy? MoveValue.you:MoveValue.other;
+		
+		GameSession gameSession = new GameSession(client, enemy, first);
+			
+		client.setGameSession(gameSession);
+		enemy.setGameSession(gameSession);
 
 		// Invio i messaggi di inizio    
-		enemy.getOut().print( new ChallengeResult(ChallengeResultStatus.ok,MoveValue.other,client.getUsername()));
+		try {
+			enemy.write( new ChallengeResult(ChallengeResultStatus.ok,enemyMoveValue,client.getUsername()));
+		} catch (IOException e) {
+			// La pulizia viene fatta dal client handler del giocatore disconnesso
+		}
 		
-		return new ChallengeResult(ChallengeResultStatus.ok,MoveValue.you,enemy.getUsername());
+		return new ChallengeResult(ChallengeResultStatus.ok,clientMoveVale,enemy.getUsername());
 	}
 	
 	

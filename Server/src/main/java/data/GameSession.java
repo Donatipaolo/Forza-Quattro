@@ -79,7 +79,8 @@ public class GameSession {
 			
 			
 		} catch (IOException e) {
-			disconnection(mover);
+			//La disconnessione dell'avversario viene gestita dal clientHandler apposito
+			return null;
 			
 		} catch (Exception e) {
 			//Mossa non valida
@@ -94,7 +95,9 @@ public class GameSession {
 
 	
 	public void cleanup() {
-		if(closed) return;
+		//Controllo che la sessione non sia già stata chiusa da l'altro client=
+		if(closed) 
+				return;
 		
 		closed = true;
 		
@@ -105,12 +108,15 @@ public class GameSession {
 		client2.setStatus(Status.free);
 	}
 	
-	public void disconnection(Client quitter) {
+	public synchronized void disconnection(Client quitter) {
 		Client enemy = quitter == client1 ? client2 : client1;
 
 	    try {
 	        enemy.write(new GameEnd(GameEndResult.won, GameEndInfo.enemy_disconnected));
-	    } catch (IOException e) {}
+	    } catch (IOException e) {
+	    	//In caso che la scrittura non vada allora anche l'altro client si è disconnesso.
+	    	//La gestione della disconnessione dell'altro client viene gestita dal clientHandler apposito
+	    }
 
 	    cleanup();
 	}
