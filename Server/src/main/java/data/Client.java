@@ -13,6 +13,7 @@ public class Client {
 	private String username;
 	private Status status;
 	private Socket socket;
+	private GameSession gameSession;
 	private BufferedReader in;
 	private PrintWriter out;
 	
@@ -64,5 +65,19 @@ public class Client {
 
 	public PrintWriter getOut() {
 		return this.out;
+	}
+	
+	public synchronized void createGameSession(Client enemy) {
+		//Controllo che l'avversario non abbia già creato la gamesession
+		synchronized(enemy) {
+			if(enemy.c)
+			
+		}
+		
+		if (this.gameSession != null) {
+			return;
+		}
+		
+		
 	}
 }

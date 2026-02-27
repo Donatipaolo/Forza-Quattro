@@ -17,7 +17,6 @@ public class ClientHandler extends Thread implements Runnable{
 	public static PendingRequestList pendingRequestList = null;
 	
 	private Client client;
-	private GameSession gameSession = null;
 	private Status status = Status.free;
 	
 	public ClientHandler(Client client) {
@@ -157,6 +156,9 @@ public class ClientHandler extends Thread implements Runnable{
 		
 		
 		// Creo la nuova game session e avvio la partita
+		Client.createGameSession(enemy);
+		
+		
 		
 		// Manca la game Session
 		

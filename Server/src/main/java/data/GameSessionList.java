@@ -1,4 +1,6 @@
-package data;
+
+
+/*package data;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,57 +17,66 @@ private ArrayList<GameSession> listOfGameSession;
 		listOfGameSession.add(new GameSession());
 	}
 	
-	public synchronized void removeClient(String username) {
-		for(int i = 0; i < listOfClient.size(); i++) {
-			if(listOfClient.get(i).getUsername().equals(username)) {
-				listOfClient.remove(i);
-			}
+	public synchronized void removeGameSession() {
+		for(int i = 0; i < listOfGameSession .size(); i++) {
+			//TODO Bisogna definire la condizione per cui rimuovere il client
 		}
 	}
 	
-	public Client getClient(String username) {
-		for(int i = 0; i < listOfClient.size(); i++) {
-			if(listOfClient.get(i).getUsername().equals(username)) {
-				return listOfClient.get(i);
-			}
+	public GameSession getGameSession() {
+		for(int i = 0; i < listOfGameSession .size(); i++) {
+			//TODO Bisogna definire la condizione per cui ottenere il client
 		}
 		return null;
 	}
 	
-	public Client getLastClient() {
-		return listOfClient.getLast();
+	public GameSession getLastClient() {
+		return listOfGameSession .getLast();
 	}
 	
-	public boolean isUsernameUnique(String username) {
-		for(Client c : listOfClient) {
-			if(c.getUsername().equals(username)) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
-	public boolean isClientInList(String username) {
-		for(Client c : listOfClient) {
-			if(c.getUsername().equals(username)) {
-				return true;
-			}
+	public boolean isGameSessionInList(String username) {
+		for(GameSession s : listOfGameSession) {
+			//TODO Bisogna definire la condizione per cui controllare il GameSession
 		}
 		return false;
 	}
 	
 	@Override
-    public Iterator<Client> iterator() {
-        return new ClientIterator(this.listOfClient);
+    public Iterator<GameSession> iterator() {
+        return new ClientIterator(this.listOfGameSession );
     }
 	
     public ArrayList<Player> getPlayerList()  {
 		ArrayList<Player> listOfPlayer = new ArrayList<Player>();
 		
-		for(Client client : this.listOfClient) {
+		for(Client client : this.listOfGameSession ) {
 			listOfPlayer.add(new Player(client.getUsername(),client.getStatus()));	
 		
 		}
 		return listOfPlayer;
     }
 }
+
+class GameSessionIterator implements Iterator<GameSession>{
+	private ArrayList<Client> data;
+    private int index = 0;
+    
+    public ClientIterator(ArrayList<Client> data) {
+    	this.data = data;
+    }
+    
+    @Override
+    public boolean hasNext() {
+        return index < data.size();
+    }
+
+    @Override
+    public GameSession next() {
+        return data.get(index++);
+    }
+    
+    
+
+} 
+*/
