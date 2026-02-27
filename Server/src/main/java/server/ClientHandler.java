@@ -30,10 +30,23 @@ public class ClientHandler extends Thread implements Runnable{
 		try {
 			clientHandler();
 		} catch (IOException e) {
-			e.printStackTrace();
+			 handleClientCrash();
 		}
 	}
 	
+	private void handleClientCrash() {
+	    GameSession session = client.getGameSession();
+
+	    if (session != null) {
+	        session.disconnection(client);
+	    } else {
+		    client.setStatus(Status.free);
+		    client.setGameSession(null);
+	    }
+
+	}
+	
+
 	public void clientHandler() throws IOException{
 		// invio il messaggio di inizializzazione della connessione
 		client.getOut().print(MessageFormatterParser.toJson(new ServerConnectionResult(client.getUsername())));
@@ -154,14 +167,20 @@ public class ClientHandler extends Thread implements Runnable{
 			enemy.setStatus(Status.in_game);
 		}
 		
+		// Creo la nuova game session
+		if(client.getGameSession() == null && enemy.getGameSession() == null) {
+			
+			GameSession gameSession = new GameSession(client, enemy, client);
+			
+			client.setGameSession(gameSession);
+			enemy.setGameSession(gameSession);
+			
+			// Cambio lo stato della game session
+			this.status = Status.in_game;
+		}
 		
-		// Creo la nuova game session e avvio la partita
-		Client.createGameSession(enemy);
-		
-		
-		
-		// Manca la game Session
-		
+
+		// Invio i messaggi di inizio    
 		enemy.getOut().print( new ChallengeResult(ChallengeResultStatus.ok,MoveValue.other,client.getUsername()));
 		
 		return new ChallengeResult(ChallengeResultStatus.ok,MoveValue.you,enemy.getUsername());
@@ -174,12 +193,22 @@ public class ClientHandler extends Thread implements Runnable{
 	// Metodi per la gestione in partita
 	//
 
-	private Message handleMove(Message msg) {
-		// TODO Auto-generated method stub
-		return null;
+	private Message handleMove(Message generalMsg) {
+		Move msg = (Move) generalMsg;
+		GameSession session = client.getGameSession();
+		
+		// Il metodo insert gestisce gia tute le casistiche della partita (controllo validità, vittoria e messaggio da ritornare)
+		return session.insert(client,msg.getColumn());
 	}
 
-	private Message handleDisconnect(Message msg) {
+	private Message handleDisconnect(Message generalMsg) {
+		Disconnect msg = (Disconnect) generalMsg;
+		GameSession session = client.getGameSession();
+		
+		if(session != null) {
+	        session.disconnection(client);
+	    }
+		
 		return null;
 	}
 	

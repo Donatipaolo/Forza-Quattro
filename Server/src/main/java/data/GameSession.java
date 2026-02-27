@@ -16,7 +16,8 @@ public class GameSession {
 	private Client client2; //Colui che riceve la richiesta
 	private Client currentClient; //se è true è il turno del client1 altrimenti è il turno del client 2
 	private Grid grid;
-	//La prima mossa
+	private boolean closed = false;
+	//La prima mossa è del giallo
 	
 	public GameSession(Client client1,Client client2,Client currentClient) {
 		this.client1 = client1; //giocatore giallo
@@ -33,20 +34,26 @@ public class GameSession {
 		return false;
 	}
 	
-	public void handleGameFinished(int column, Client mover, Client enemy) throws IOException {
-		//invio all'avversario la mossa
-		mover.write(new MoveResult(MoveResultStatus.ok));
+	public void handleGameFinished(int column, Client mover, Client enemy) {
+		try {
+			mover.write(new MoveResult(MoveResultStatus.ok));
+		} catch (IOException e) {
+			disconnection(mover);
+			return;
+		}
 		
-		enemy.write(new Move(column));
-		enemy.write(new GameEnd(GameEndResult.defeat,GameEndInfo.game_ended));
-		
-		mover.setStatus(Status.free);
-		enemy.setStatus(Status.free);
-		
-		//Elimino la game session
+		try {
+			enemy.write(new Move(column));
+			enemy.write(new GameEnd(GameEndResult.defeat, GameEndInfo.game_ended));
+		} catch (IOException e) {
+			disconnection(enemy);
+		}
 	}
 	
 	public Message insert(Client mover,int column) {
+		
+		//Controllo se è la sessione è stata chiusa
+		if (closed) return null;
 		
 		//Controllo se non è il tuo turno
 		if(currentClient != mover) {
@@ -63,6 +70,7 @@ public class GameSession {
 			//Controllo la fine del gioco
 			if(isGameFinished(currentColor, column)) {
 				handleGameFinished(column, mover, enemyClient);
+				cleanup();
 				return new GameEnd(GameEndResult.won,GameEndInfo.game_ended);
 			}
 			
@@ -71,7 +79,7 @@ public class GameSession {
 			
 			
 		} catch (IOException e) {
-			//Non la gestisce lui
+			disconnection(mover);
 			
 		} catch (Exception e) {
 			//Mossa non valida
@@ -82,6 +90,29 @@ public class GameSession {
 		currentClient = enemyClient;
 
 		return new MoveResult(MoveResultStatus.ok);
+	}
+
+	
+	public void cleanup() {
+		if(closed) return;
+		
+		closed = true;
+		
+		client1.setGameSession(null);
+		client2.setGameSession(null);
+		
+		client1.setStatus(Status.free);
+		client2.setStatus(Status.free);
+	}
+	
+	public void disconnection(Client quitter) {
+		Client enemy = quitter == client1 ? client2 : client1;
+
+	    try {
+	        enemy.write(new GameEnd(GameEndResult.won, GameEndInfo.enemy_disconnected));
+	    } catch (IOException e) {}
+
+	    cleanup();
 	}
 	
 	

@@ -20,7 +20,8 @@ public class Client {
 	public Client(Socket socket,String username) {
 		this.socket = socket;
 		this.username = username;
-		status = Status.free;
+		this.gameSession = null;
+		this.status = Status.free;
 		
 		try {
 			this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -67,17 +68,12 @@ public class Client {
 		return this.out;
 	}
 	
-	public synchronized void createGameSession(Client enemy) {
-		//Controllo che l'avversario non abbia già creato la gamesession
-		synchronized(enemy) {
-			if(enemy.c)
-			
-		}
-		
-		if (this.gameSession != null) {
-			return;
-		}
-		
-		
+	public GameSession getGameSession() {
+		return this.gameSession;
 	}
+	
+	public synchronized void setGameSession(GameSession gameSession) {
+		this.gameSession = gameSession;
+	}
+	
 }
