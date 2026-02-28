@@ -26,19 +26,26 @@ public class GameSession {
 		this.grid = new Grid();
 	}
 	
-	public boolean isGameFinished(Color color, int column) throws Exception {
+	public synchronized boolean isGameFinished(Color color, int column) throws Exception {
 		
 		if(grid.isFinished(color, column)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public synchronized boolean isGameTied() {
+		if(grid.isGameTied()) {
 			return true;
 		}
 		return false;
 	}
 	
-	public void handleGameFinished(int column, Client mover, Client enemy) {
+	public synchronized void handleGameFinished(int column, Client mover, Client enemy) {
 		try {
 			mover.write(new MoveResult(MoveResultStatus.ok));
 		} catch (IOException e) {
-			disconnection(mover);
 			return;
 		}
 		
@@ -49,7 +56,21 @@ public class GameSession {
 		}
 	}
 	
-	public Message insert(Client mover,int column) {
+	public synchronized void handleGameTied(int column,Client mover, Client enemy) {
+		try {
+			mover.write(new MoveResult(MoveResultStatus.ok));
+		} catch (IOException e) {
+			return;
+		}
+		
+		try {
+			enemy.write(new Move(column));
+			enemy.write(new GameEnd(GameEndResult.tie, GameEndInfo.game_ended));
+		} catch (IOException e) {
+		}
+	}
+	
+	public synchronized Message insert(Client mover,int column) {
 		
 		//Controllo se è la sessione è stata chiusa
 		if (closed) return null;
@@ -73,6 +94,13 @@ public class GameSession {
 				return new GameEnd(GameEndResult.won,GameEndInfo.game_ended);
 			}
 			
+			//Controllo del pareggio
+			if(isGameTied()) {
+				handleGameTied(column, mover, enemyClient);
+				cleanup();
+				return new GameEnd(GameEndResult.tie, GameEndInfo.game_ended);
+			}
+			
 			//Invio la mossa al client avversario
 			enemyClient.write(new Move(column));
 			
@@ -93,7 +121,7 @@ public class GameSession {
 	}
 
 	
-	public void cleanup() {
+	public synchronized  void cleanup() {
 		//Controllo che la sessione non sia già stata chiusa da l'altro client=
 		if(closed) 
 				return;

@@ -184,16 +184,28 @@ public class ClientHandler extends Thread implements Runnable{
 			return new ChallengeResult(ChallengeResultStatus.client_not_found,MoveValue.none,enemy.getUsername());
 		}
 		
+		if(msg.getStatus() == ChallengeResponseStatus.refused) {
+			try {
+				//Elimino la richiesta
+				pendingRequestList.remove(enemy, client);
+				
+				enemy.write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,client.getUsername()));
+				return null;
+			} catch (IOException e) {return null;}
+		}
+		
+		//Se viene accetta:
 		// Controllo gli stati dei due giocatori coinvolti e li aggiorno
 		synchronized(clientList) {
 			
 			if(!(client.getStatus().equals(Status.free) && enemy.getStatus().equals(Status.free)) ) {
-				pendingRequestList.remove(client,enemy); //Rimuovo la richiesta
+				pendingRequestList.remove(enemy, client); //Rimuovo la richiesta
 				return new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,enemy.getUsername());
 			} 
 			
 			client.setStatus(Status.in_game);
 			enemy.setStatus(Status.in_game);
+			pendingRequestList.remove(enemy, client);
 		}
 		
 		//Qui non è necessario inserire un blocco sincronizzato visto che una volta arrivato a questo punto i client sono 

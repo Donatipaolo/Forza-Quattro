@@ -8,6 +8,7 @@ enum Color{
 public class Grid {
 
 	private Color grid[][];
+	private int counter = 0;
 	
 	public Grid() {
 		this.grid = new Color[6][7];
@@ -19,6 +20,7 @@ public class Grid {
 			for(int i = 0; i < 6; i++) {
 				if(grid[i][column] == null) {
 					grid[i][column] = color;
+					counter++;
 					return;
 				}
 			}
@@ -38,7 +40,7 @@ public class Grid {
 			}
 		}
 		
-		return 6;
+		return 5;
 		
 	}
 	
@@ -161,6 +163,12 @@ public class Grid {
 	
 	public synchronized boolean isColumnEmpty(int column) {
 		return grid[0][column] == null? true: false;
+	}
+
+	public boolean isGameTied() {
+		if(counter < 42)
+			return false;
+		return true;
 	}
 }
 

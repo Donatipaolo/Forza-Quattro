@@ -18,6 +18,7 @@ public class PendingRequestList implements Iterable<PendingRequest>{
 		for(PendingRequest p : pendingRequestList) {
 			if(p.getSender() == sender && p.getDestination() == destination) {
 				pendingRequestList.remove(p);
+				return;
 			}
 		}
 	}
