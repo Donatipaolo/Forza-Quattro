@@ -2,6 +2,8 @@ package protocol;
 
 import java.util.ArrayList;
 
+import data.Client;
+import data.ClientList;
 import data.Player;
 import enums.*;
 
@@ -50,4 +52,17 @@ public class FunctionalTestProtocol {
 		System.out.println("\n--------------------------------------------\n");
 	}
 	
+	private static ClientList clients(){
+		ClientList clientlist = new ClientList();
+		clientlist.addClient(null, "donati");
+		clientlist.addClient(null, "canocchi");
+		clientlist.addClient(null, "iaquinta");
+		clientlist.addClient(null, "polini");
+		clientlist.addClient(null, "macchia");
+		clientlist.addClient(null, "bacci");
+		clientlist.addClient(null, "salcioli");
+		clientlist.addClient(null, "guerrini");
+		
+		return clientlist;
+	}
 }

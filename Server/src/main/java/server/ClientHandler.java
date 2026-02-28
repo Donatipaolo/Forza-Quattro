@@ -163,11 +163,7 @@ public class ClientHandler extends Thread implements Runnable{
 		}
 		
 		pendingRequestList.push(client, enemy);
-		try {
-			enemy.write(msg);
-		} catch (IOException e) {
-			//In caso il client non sia più disponibile il suo client handler si occuperà della pulizia
-		}
+		enemy.write(msg);
 
 		return null;		
 	}
@@ -185,13 +181,13 @@ public class ClientHandler extends Thread implements Runnable{
 		}
 		
 		if(msg.getStatus() == ChallengeResponseStatus.refused) {
-			try {
-				//Elimino la richiesta
-				pendingRequestList.remove(enemy, client);
+			
+			//Elimino la richiesta
+			pendingRequestList.remove(enemy, client);
 				
-				enemy.write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,client.getUsername()));
-				return null;
-			} catch (IOException e) {return null;}
+			enemy.write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,client.getUsername()));
+			return null;
+		
 		}
 		
 		//Se viene accetta:
@@ -223,11 +219,9 @@ public class ClientHandler extends Thread implements Runnable{
 		enemy.setGameSession(gameSession);
 
 		// Invio i messaggi di inizio    
-		try {
-			enemy.write( new ChallengeResult(ChallengeResultStatus.ok,enemyMoveValue,client.getUsername()));
-		} catch (IOException e) {
-			// La pulizia viene fatta dal client handler del giocatore disconnesso
-		}
+		enemy.write( new ChallengeResult(ChallengeResultStatus.ok,enemyMoveValue,client.getUsername()));
+		
+		
 		
 		return new ChallengeResult(ChallengeResultStatus.ok,clientMoveVale,enemy.getUsername());
 	}

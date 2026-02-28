@@ -43,31 +43,17 @@ public class GameSession {
 	}
 	
 	public synchronized void handleGameFinished(int column, Client mover, Client enemy) {
-		try {
-			mover.write(new MoveResult(MoveResultStatus.ok));
-		} catch (IOException e) {
-			return;
-		}
 		
-		try {
-			enemy.write(new Move(column));
-			enemy.write(new GameEnd(GameEndResult.defeat, GameEndInfo.game_ended));
-		} catch (IOException e) {
-		}
+		mover.write(new MoveResult(MoveResultStatus.ok));
+		enemy.write(new Move(column));
+		enemy.write(new GameEnd(GameEndResult.defeat, GameEndInfo.game_ended));
 	}
 	
 	public synchronized void handleGameTied(int column,Client mover, Client enemy) {
-		try {
-			mover.write(new MoveResult(MoveResultStatus.ok));
-		} catch (IOException e) {
-			return;
-		}
-		
-		try {
-			enemy.write(new Move(column));
-			enemy.write(new GameEnd(GameEndResult.tie, GameEndInfo.game_ended));
-		} catch (IOException e) {
-		}
+	
+		mover.write(new MoveResult(MoveResultStatus.ok));
+		enemy.write(new Move(column));
+		enemy.write(new GameEnd(GameEndResult.tie, GameEndInfo.game_ended));
 	}
 	
 	public synchronized Message insert(Client mover,int column) {
@@ -136,15 +122,10 @@ public class GameSession {
 	}
 	
 	public synchronized void disconnection(Client quitter) {
+		
 		Client enemy = quitter == client1 ? client2 : client1;
-
-	    try {
-	        enemy.write(new GameEnd(GameEndResult.won, GameEndInfo.enemy_disconnected));
-	    } catch (IOException e) {
-	    	//In caso che la scrittura non vada allora anche l'altro client si è disconnesso.
-	    	//La gestione della disconnessione dell'altro client viene gestita dal clientHandler apposito
-	    }
-
+		
+	    enemy.write(new GameEnd(GameEndResult.won, GameEndInfo.enemy_disconnected));
 	    cleanup();
 	}
 	

@@ -62,7 +62,7 @@ public class Client {
 		
 	}
 	
-	public void write(Message msgResponse) throws IOException {
+	public void write(Message msgResponse){
 		synchronized(out) {
 			out.println(MessageFormatterParser.toJson(msgResponse));
 			out.flush();
