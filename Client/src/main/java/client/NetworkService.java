@@ -39,11 +39,7 @@ public class NetworkService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		//Avvio i thread
-		sendThread.start();
-		listenerThread.start();
+
 	}
 	
 	public Queue getReadQueue() {
@@ -52,6 +48,12 @@ public class NetworkService {
 	
 	public Queue getSendQueue() {
 		return this.sendQueue;
+	}
+
+	public void start() {
+		//Avvio i thread
+		sendThread.start();
+		listenerThread.start();
 	}
 }
 

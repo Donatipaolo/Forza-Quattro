@@ -3,13 +3,18 @@ package application;
 import client.ClientController;
 import protocol.*;
 
+//TODO NON PENSO CHE QUESTO SIA IL SUO VERO SCOPO DOBBIAMO RIPARLARNE
+//Da quanto avevamo discusso in classe l' ultima volta questa componente doveva occuparsi di gestire l' interfaccia graficaù
+//La connessione del client controller e del service network non è gestita da questo thread quindi li ho tolti
+//Per il resto riparliamone che non mi torna
+
 // UserManager gestisce l'interazione utente e aggiorna l'interfaccia senza occuparsi della rete
 public class UserManager {
 
-    private ClientController clientController;					// Permette di notificare le azioni al controller
+   
 
-    public UserManager(ClientController clientController){
-        this.clientController = clientController;				// Collega UserManager al ClientController
+    public UserManager(){
+   				
     }
 
     // ===== INPUT UTENTE =====

@@ -5,17 +5,27 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 
+enum Color{
+	red, //Style giocatore 1
+	yellow //Style giocatore 2
+}
+
 public class GameController {
 
     @FXML
     private GridPane grid;
 
+    //La dimensione della griglia
     private static final int ROWS = 6;
     private static final int COLS = 7;
 
+    //La griglia da stampare
     private StackPane[][] cells = new StackPane[ROWS][COLS];
-    private int currentPlayer = 1;
 
+    private boolean myTurn;
+    private Color myColor;
+    private Color otherColor;
+    
     @FXML
     public void initialize() {
         createGrid();
@@ -41,7 +51,7 @@ public class GameController {
                 
                 cell.setOnMouseEntered(e -> highlightColumn(column, true));
                 cell.setOnMouseExited(e -> highlightColumn(column, false));
-                cell.setOnMouseClicked(e -> dropDisc(column));
+                cell.setOnMouseClicked(e -> newMove(column));
                 
 
                 cells[row][col] = cell;
@@ -60,7 +70,49 @@ public class GameController {
         }
     }
 
-    private void dropDisc(int col) {
+    private void newMove(int column) {
+    	//Controllo se è il tuo turno
+    	if(!myTurn)
+    		return;
+    	
+    	//Controllo se la mossa non è valida
+    	if(!isColumnFree(column)) {
+    		handleInvalidMove();
+    	}
+    	
+    	//TODO Invio la richiesta al ClientController/NetworkService
+    	//Aspetto la risposta
+    	
+    	//NEL CASO POSITIVO
+    	dropDisc(column,myColor);
+    	myTurn = !myTurn;
+    	
+    	//NEL CASO NEGATIVO
+    	//SE È INVALID MOVE
+    	handleInvalidMove();
+    	
+    	//SE È NOT YOUR TURN
+    	//o inviamo una disconnect
+    	//o semplicemente invertiamo il turno (sperando che non siano sfalsati i due client e server)
+    }
+    
+    private void handleInvalidMove() {
+		//Bisogna mostrare a schermo che la mossa non è valida per un 2-3 secondi
+		
+	}
+
+	private boolean isColumnFree(int column) {
+		Circle hole = (Circle) cells[ROWS-1][column].getChildren().get(0);
+		
+		if(hole.getStyleClass().contains("hole")) {
+			return false;
+		}
+		
+		return true;
+	}
+
+	//Mostra a schermo la mossa
+	private void dropDisc(int col, Color color) {
 
         for (int row = ROWS - 1; row >= 0; row--) {
 
@@ -70,14 +122,11 @@ public class GameController {
 
                 hole.getStyleClass().remove("hole");
 
-                if (currentPlayer == 1) {
+                if (color == Color.red) {
                     hole.getStyleClass().add("player1");
                 } else {
                     hole.getStyleClass().add("player2");
                 }
-
-                currentPlayer = (currentPlayer == 1) ? 2 : 1;
-                break;
             }
         }
     }
