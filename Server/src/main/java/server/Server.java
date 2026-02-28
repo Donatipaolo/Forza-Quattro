@@ -20,12 +20,13 @@ public class Server extends Thread implements Runnable{
 	
 	public Server(ClientList clientlist){
 		
-		super();
+		super("Server");
 		
 		this.clientList = clientlist;
 		
 		try {
 			this.serverSocket = new ServerSocket(20000);
+			this.serverSocket.setReuseAddress(true);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

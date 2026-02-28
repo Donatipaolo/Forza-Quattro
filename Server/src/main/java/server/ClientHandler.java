@@ -21,7 +21,7 @@ public class ClientHandler extends Thread implements Runnable{
 	private Status status = Status.free;
 	
 	public ClientHandler(Client client) {
-		super();
+		super("Client Handler");
 		this.client = client;
 		
 	}
@@ -61,7 +61,7 @@ public class ClientHandler extends Thread implements Runnable{
 
 	public void clientHandler() throws IOException{
 		// invio il messaggio di inizializzazione della connessione
-		client.getOut().print(MessageFormatterParser.toJson(new ServerConnectionResult(client.getUsername())));
+		client.write(new ServerConnectionResult(client.getUsername()));
 		
 		// ciclo lettura richiesta ed elaborazione risposta
 		while(true) {
@@ -69,7 +69,7 @@ public class ClientHandler extends Thread implements Runnable{
 			Message msgRequest = client.read();
 			Message msgResponse;
 			
-			if(this.status == Status.free) {
+			if(this.client.getStatus() == Status.free) {
 				msgResponse = handleMessageLobby(msgRequest);
 			}
 			else {
@@ -102,10 +102,10 @@ public class ClientHandler extends Thread implements Runnable{
 	
 	            case challenge_response:
 	                return handleChallengeResponse(msg);
-	               
+
 	
 	            default:
-	                System.out.println("Unhandled message type: " + msgType);
+	                System.out.println("Unhandled message type in lobby: " + msgType);
 	                return null;
 	        }
 	}
@@ -125,7 +125,7 @@ public class ClientHandler extends Thread implements Runnable{
                 return handleDisconnect(msg);
 
             default:
-                System.out.println("Unhandled message type: " + msgType);
+                System.out.println("Unhandled message type in game: " + msgType);
                 return null;
         }
 }

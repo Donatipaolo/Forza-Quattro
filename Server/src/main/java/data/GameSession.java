@@ -46,7 +46,6 @@ public class GameSession {
 			enemy.write(new Move(column));
 			enemy.write(new GameEnd(GameEndResult.defeat, GameEndInfo.game_ended));
 		} catch (IOException e) {
-			disconnection(enemy);
 		}
 	}
 	
@@ -61,7 +60,7 @@ public class GameSession {
 		}
 		
 		Color currentColor = currentClient == client2? Color.red : Color.yellow;
-		Client enemyClient = mover == client1? client1 : client2;
+		Client enemyClient = mover == client1? client2 : client1;
 		
 		try {
 			//Eseguo la mossa

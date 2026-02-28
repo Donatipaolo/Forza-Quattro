@@ -14,6 +14,7 @@ public class PlayListResponse implements Message{
 	public PlayListResponse() {}
 	
 	public PlayListResponse(ArrayList<Player> list) {
+		this.type = MessageType.play_list_response;
 		this.listOfPlayer = list;
 	}
 	

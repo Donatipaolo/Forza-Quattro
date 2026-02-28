@@ -156,7 +156,7 @@ public class Grid {
 	}
 	
 	public synchronized boolean isColumnFull(int column) {
-		return grid[6][column] != null? true : false ;
+		return grid[5][column] != null? true : false ;
 	}
 	
 	public synchronized boolean isColumnEmpty(int column) {

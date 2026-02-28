@@ -51,13 +51,23 @@ public class Client {
 		return this.socket;
 	}
 	
-	public synchronized Message read() throws IOException {
-		String inputJson = in.readLine();
-		return MessageFormatterParser.fromJson(inputJson);
+	public Message read() throws IOException {
+		synchronized(in) {
+			String inputJson = in.readLine();
+			if (inputJson == null)
+				throw new IOException();
+			
+			return MessageFormatterParser.fromJson(inputJson);
+		}
+		
 	}
 	
-	public synchronized void write(Message msgResponse) throws IOException {
-		out.print(MessageFormatterParser.toJson(msgResponse));
+	public void write(Message msgResponse) throws IOException {
+		synchronized(out) {
+			out.println(MessageFormatterParser.toJson(msgResponse));
+			out.flush();
+		}
+		
 	}
 	
 	public BufferedReader getIn() {

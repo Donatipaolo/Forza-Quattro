@@ -2,8 +2,9 @@ package protocol;
 
 import java.util.ArrayList;
 
+import data.Client;
 import data.ClientList;
-
+import data.Player;
 import enums.*;
 
 public class FunctionalTestProtocol {
@@ -20,7 +21,7 @@ public class FunctionalTestProtocol {
 		toJsonTest(new ChangeUsernameRequest("Donati"));
 		toJsonTest(new ChangeUsernameResponse(ChangeUsernameResult.ok));
 		toJsonTest(new PlayListRequest());
-		toJsonTest(new PlayListResponse());
+		//toJsonTest(new PlayListResponse(clients().getPlayerList()));
 		toJsonTest(new ChallengeRequest("Donati"));
 		toJsonTest(new ChallengeResponse(ChallengeResponseStatus.ok,"Canocchi"));
 		toJsonTest(new Move(3));

@@ -22,8 +22,8 @@ public class Move implements Message{
 		return column;
 	}
 	
-	public void setType() {
-		this.type = MessageType.move;
+	public void setType(MessageType type) {
+		this.type = type;
 	}
 	
 	public void setColumn(int column) {

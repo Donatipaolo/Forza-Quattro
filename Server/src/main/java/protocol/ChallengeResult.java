@@ -11,7 +11,7 @@ public class ChallengeResult implements Message{
 	public ChallengeResult() {}
 	
 	public ChallengeResult(ChallengeResultStatus status, MoveValue firstMove, String username) {
-		this.type = MessageType.challenge_response;
+		this.type = MessageType.challenge_result;
 		this.status = status;
 		this.username = username;
 		this.firstMove =firstMove;

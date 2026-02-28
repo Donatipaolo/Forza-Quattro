@@ -22,6 +22,7 @@ public class ClientList implements Iterable<Client>{
 		for(int i = 0; i < listOfClient.size(); i++) {
 			if(listOfClient.get(i).getUsername().equals(username)) {
 				listOfClient.remove(i);
+				return;
 			}
 		}
 	}
