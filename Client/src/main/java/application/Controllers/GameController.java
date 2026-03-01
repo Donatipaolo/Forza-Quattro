@@ -1,12 +1,14 @@
-package application;
+package application.Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import enums.GameEndResult;
+import enums.GameEndInfo;
 
 enum Color{
-	red, //Style giocatore 1
+red, //Style giocatore 1
 	yellow //Style giocatore 2
 }
 
@@ -100,6 +102,10 @@ public class GameController {
 		//Bisogna mostrare a schermo che la mossa non è valida per un 2-3 secondi
 		
 	}
+    
+    private void gameEnd(GameEndResult gameEndResult, GameEndInfo gameEndInfo) {
+    	//cambiare la scena a quella di fine gioco e mostrare i diversi messaggi di info
+    }
 
 	private boolean isColumnFree(int column) {
 		Circle hole = (Circle) cells[ROWS-1][column].getChildren().get(0);

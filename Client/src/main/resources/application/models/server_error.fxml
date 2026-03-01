@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="application.Controllers.ServerErrorController"
+           styleClass="error-root" stylesheets="@../css/server_error.css">
+
+    <VBox alignment="CENTER" spacing="30" maxWidth="600" styleClass="error-card">
+        
+        <VBox alignment="CENTER" spacing="10">
+            <Text text="CONNECTION LOST" styleClass="error-title" />
+            <Text text="The server has disconnected or is unreachable." styleClass="error-message" />
+        </VBox>
+
+        <Button text="CLOSE APPLICATION" 
+                onAction="#handleCloseApp" 
+                styleClass="button-exit" />
+                
+    </VBox>
+</StackPane>

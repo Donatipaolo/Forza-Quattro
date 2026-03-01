@@ -1,0 +1,37 @@
+package application;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import java.io.IOException;
+
+import application.Controllers.GameEndController;
+import enums.GameEndResult;
+import enums.GameEndInfo;
+
+public class GameEndScene {
+    
+    private Scene scene;
+
+    public GameEndScene(GameEndResult result, GameEndInfo extraInfo) {
+        try {
+            // Carica il file FXML dalle risorse
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/models/game_end.fxml"));
+            Parent root = loader.load();
+            
+            // Crea la scena con le dimensioni specificate
+            this.scene = new Scene(root, 1000, 750);
+            
+            // Otteniamo il controller per passare i dati
+            GameEndController controller = loader.getController();
+            controller.setResults(result, extraInfo);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
+}

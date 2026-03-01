@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="application.Controllers.GameEndController"
+           styleClass="root" stylesheets="@../css/game_end.css">
+
+    <VBox alignment="CENTER" spacing="40" maxWidth="700" styleClass="end-card">
+        
+        <VBox alignment="CENTER" spacing="10">
+            <Text fx:id="resultTitle" text="RESULT" />
+            <Text fx:id="additionalInfo" text="Extra details go here" />
+        </VBox>
+
+        <Button text="CONTINUE TO LOBBY" 
+                onAction="#handleBackToLobby" 
+                styleClass="button-back" />
+                
+    </VBox>
+</StackPane>

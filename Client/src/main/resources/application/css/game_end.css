@@ -1,0 +1,64 @@
+.root {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 70%, #2a2a40, #14141f);
+}
+
+.end-card {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 30;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-width: 2;
+    -fx-padding: 60; /* Più spazio interno */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 30, 0, 0, 15);
+}
+
+.title-win {
+    -fx-font-size: 80px; 
+    -fx-font-weight: 900;
+    -fx-fill: #4caf50; /* Verde brillante */
+    /* Ombra netta e scura, raggio di sfocatura ridotto a 2 (quasi zero) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 2, 0, 0, 2);
+    -fx-text-alignment: center;
+}
+
+.title-loss {
+    -fx-font-size: 80px;
+    -fx-font-weight: 900;
+    -fx-fill: #ff5252; /* Rosso brillante */
+    /* Ombra netta e scura */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 2, 0, 0, 2);
+    -fx-text-alignment: center;
+}
+
+.title-draw {
+    -fx-font-size: 80px;
+    -fx-font-weight: 900;
+    -fx-fill: #ffd740; /* Giallo brillante */
+    /* Ombra netta e scura */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 2, 0, 0, 2);
+    -fx-text-alignment: center;
+}
+
+/* Info aggiuntive più leggibili */
+.info-text {
+    -fx-fill: #e0e0e0;
+    -fx-font-size: 22px; /* Molto più grande di prima */
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 30 0;
+}
+
+/* Bottone massiccio */
+.button-back {
+    -fx-background-color: #304ffe;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-padding: 15 40;
+    -fx-cursor: hand;
+}
+
+.button-back:hover {
+    -fx-background-color: #536dfe;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}

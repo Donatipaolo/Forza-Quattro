@@ -9,24 +9,27 @@ import javafx.stage.Stage;
 
 public class GameScene{
 
-	private Stage stage;
 	private Scene scene;
+	private int width;
+	private int height;
 	
-	public GameScene(Stage stage) throws IOException {
+	public GameScene(){
 		
-		this.stage = stage;
-		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("connect4.fxml"));
-        scene = new Scene(loader.load());
-
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-
-        stage.setTitle("Forza Quattro - Modern UI");
-        stage.setScene(scene);
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("models/connect4.fxml"));
+			Parent root = loader.load();
+			
+			this.scene = new Scene(root);
+			
+	        scene.getStylesheets().add(getClass().getResource("css/connect4.css").toExternalForm());
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void show() {
-        stage.show();
+	public Scene getScene() {
+		return this.scene;
 	}
 
 }

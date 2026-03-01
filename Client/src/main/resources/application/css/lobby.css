@@ -1,0 +1,135 @@
+.root {
+    -fx-background-color: linear-gradient(to bottom, #1e1e2f, #2a2a40);
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+.title-text {
+    -fx-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Pannelli Laterali e Centrali */
+.glass-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-radius: 15;
+    -fx-padding: 15;
+}
+
+/* Liste e ScrollPane */
+.list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 10;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Pulsanti Moderni */
+.button-primary {
+    -fx-background-color: #304ffe;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.button-primary:hover {
+    -fx-background-color: #536dfe;
+}
+
+.button-accept {
+    -fx-background-color: #4caf50;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.button-reject {
+    -fx-background-color: #ff5252;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+/* Input */
+.text-field {
+    -fx-background-color: #35354a;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #444;
+    -fx-border-radius: 8;
+}
+
+.label-status-free { -fx-text-fill: #4caf50; -fx-font-weight: bold; }
+.label-status-ingame { -fx-text-fill: #ff5252; -fx-font-weight: bold; }
+
+/* Rimuove lo sfondo bianco e i bordi dai contenitori a scorrimento */
+.scroll-pane, .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/* Nasconde le barre di scorrimento quando non servono o le rende minimal */
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 10;
+}
+
+/* Pannelli delle richieste: aggiungiamo un tocco più scuro per contrasto */
+.glass-panel {
+    -fx-background-color: rgba(0, 0, 0, 0.2); /* Scurito per profondità */
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-radius: 15;
+}
+
+.request-card {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-border-color: rgba(48, 79, 254, 0.3); /* Un tocco di blu */
+    -fx-border-radius: 10;
+}
+
+.text-waiting {
+    -fx-fill: #b0b0b0;
+    -fx-font-style: italic;
+    -fx-font-size: 13px;
+}
+
+.text-player-name {
+    -fx-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* Animazione semplice per il testo (opzionale tramite codice) */
+.loading-dot {
+    -fx-fill: #304ffe;
+    -fx-font-weight: bold;
+}
+
+#currentNameLabel {
+    -fx-effect: dropshadow(gaussian, rgba(48, 79, 254, 0.5), 10, 0, 0, 0);
+}
+
+/* Rendi il TextField più gradevole al focus */
+.text-field:focused {
+    -fx-border-color: #304ffe;
+    -fx-background-color: #3b3b54;
+}
