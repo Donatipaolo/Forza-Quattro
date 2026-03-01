@@ -1,4 +1,4 @@
-package application;
+/*package application;
 
 import client.ClientController;
 import protocol.*;
@@ -51,4 +51,4 @@ public class UserManager {
     public void showDisconnect(){								// Mostra perdita connessione
         System.out.println("Mostrare messaggio di disconnessione.");
     }
-}
+}*/
