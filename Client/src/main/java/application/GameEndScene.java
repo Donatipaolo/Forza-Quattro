@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import java.io.IOException;
 
+import application.Controllers.GameController;
 import application.Controllers.GameEndController;
 import enums.GameEndResult;
 import enums.GameEndInfo;
@@ -12,6 +13,7 @@ import enums.GameEndInfo;
 public class GameEndScene {
     
     private Scene scene;
+    GameEndController controller;
 
     public GameEndScene(GameEndResult result, GameEndInfo extraInfo) {
         try {
@@ -23,7 +25,7 @@ public class GameEndScene {
             this.scene = new Scene(root, 1000, 750);
             
             // Otteniamo il controller per passare i dati
-            GameEndController controller = loader.getController();
+            controller = loader.getController();
             controller.setResults(result, extraInfo);
             
         } catch (IOException e) {
@@ -34,4 +36,9 @@ public class GameEndScene {
     public Scene getScene() {
         return scene;
     }
+
+	public GameEndController getController() {
+		
+		return controller;
+	}
 }

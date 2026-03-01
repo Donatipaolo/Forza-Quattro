@@ -2,6 +2,7 @@ package application;
 
 import java.io.IOException;
 
+import application.Controllers.GameController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -10,8 +11,7 @@ import javafx.stage.Stage;
 public class GameScene{
 
 	private Scene scene;
-	private int width;
-	private int height;
+	private GameController controller;
 	
 	public GameScene(){
 		
@@ -20,7 +20,7 @@ public class GameScene{
 			Parent root = loader.load();
 			
 			this.scene = new Scene(root);
-			
+			this.controller = loader.getController();
 	        scene.getStylesheets().add(getClass().getResource("css/connect4.css").toExternalForm());
 		}
 		catch(IOException e) {
@@ -30,6 +30,10 @@ public class GameScene{
 	
 	public Scene getScene() {
 		return this.scene;
+	}
+
+	public GameController getController() {
+		return controller;
 	}
 
 }

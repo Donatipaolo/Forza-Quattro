@@ -1,8 +1,16 @@
 package client;
 
 import protocol.*;
+import enums.ChallengeResultStatus;
+import enums.ChangeUsernameResult;
 import enums.MessageType;
+import enums.MoveResultStatus;
 import enums.Status;
+import javafx.application.Platform;
+import application.CurrentController;
+import application.MainApplication;
+import application.Controllers.GameController;
+import application.Controllers.LobbyController;
 import data.Queue;
 
 // ClientController coordina stato del client e comunicazione con NetworkService
@@ -55,56 +63,25 @@ public class ClientController extends Thread implements Runnable{
         }
     }
 
-    private void handleMessageGame(Message message) {
-    	MessageType type = message.getType();
-    	
-    	switch(type){
-
-    	case move:
-    		//In questo caso dobbiamo mostrare a schermo la mossa dell' avversario e aggiornare la nostra griglia
-    	break;
-    	
-        case move_response:
-            /*
-             * Nel caso che la risposta sia positiva allora dobbiamo solo aspettare la risposta dell' altro client
-             * Nel caso che sia negativa (move not valid oppure not your turn) Dobbiamo rileggere la mossa*/
-        break;
-
-        case game_end:
-            //In questo caso dobbiamo interrompere la partita e stampare a schermo il risultato 
-        	//Modificando lo stato in free
-        break;
-
-        default:
-            System.out.println("Messaggio non gestito: " + type);
-        break;
-    }
-    }
-    
     private void handleMessageLobby(Message message){
 
         MessageType type = message.getType();
         switch(type) {
         
             case change_username_response:
-                //Controllare il risultato della risposta e cambiare il nome di conseguenza
+                handleChangeUsernameResponse(message);
             break;
 
             case play_list_response:
-            	//Aggiornare la propria struttura dati che contiene i giocatori e ristamparli a schermo
+            	handlePlayListResponse(message);
             break;
             
             case challenge_request:
-                //Aggiungere la richiesta ad una lista di richieste e mostrarla a schermo in una parte dedicata
-            	//TODO Una volta che una richiesta viene accettata bisogna rifiutare tutte le altre presenti
-            	//in modo da evitare delle partite indesiderate
+                handleChallengeRequest(message);
             break;
 
             case challenge_result:
-                //In caso affermativo allora è necessario che venga avviata la partita:
-            	//Mostrare a schermo la griglia vuota
-            	//Capire se siamo noi ad eseguire la prima mossa
-            	//Modificare lo stato del client in : in_game
+                handleChallengeResult(message);
             break;
 
             default:
@@ -112,6 +89,182 @@ public class ClientController extends Thread implements Runnable{
             break;
         }
     }
+    
+   
+
+	private void handleMessageGame(Message message) {
+    	MessageType type = message.getType();
+    	
+    	switch(type){
+
+    	case move:
+    		handleMove(message);
+    	break;
+    	
+        case move_response:
+        	handleMoveResult(message);
+        break;
+
+        case game_end:
+            handleGameEnd(message);
+        break;
+
+        default:
+            System.out.println("Messaggio non gestito: " + type);
+        break;
+    }
+    }
+	
+	 private void handleChallengeResult(Message message) {
+	    	ChallengeResult challengeRequest = (ChallengeResult) message;
+			
+	    	if(challengeRequest.getStatus() == ChallengeResultStatus.ok) {
+	    		this.status = Status.in_game;
+	    		
+	    		//TODO Modificare la funzione per stampare il nome dell'avversario
+	    		MainApplication.showGame();
+	    		
+	    		//rifiuto tutte le altre richieste
+	    		//TODO rifiutare tutte le richieste in arrivo ed eliminare quella che è stata accettata
+	    	}
+	    	
+	    	Platform.runLater(() -> {
+			    if (CurrentController.controller != null) {
+			    	((LobbyController) CurrentController.controller).removeIncomingRequest(challengeRequest.getUsername());
+			    }
+			});
+	    	
+	    	if(challengeRequest.getStatus() == ChallengeResultStatus.refused) {
+	    		Platform.runLater(() -> {
+	    		    if (CurrentController.controller != null) {
+	    		    	((LobbyController) CurrentController.controller).handleResultDeclined(challengeRequest.getUsername());
+	    		    }
+	    		});
+	    		return;
+	    	}
+	    	
+	    	if(challengeRequest.getStatus() == ChallengeResultStatus.client_not_found) {
+	    		Platform.runLater(() -> {
+	    		    if (CurrentController.controller != null) {
+	    		    	((LobbyController) CurrentController.controller).handleClientAcceptedNotFound(challengeRequest.getUsername());
+	    		    }
+	    		});
+	    		return;
+	    	}
+		}
+
+		private void handleChallengeRequest(Message message) {
+			ChallengeRequest challengeRequest = (ChallengeRequest) message;
+			
+			Platform.runLater(() -> {
+			    if (CurrentController.controller != null) {
+			    	((LobbyController) CurrentController.controller).addIncomingRequest(challengeRequest.getUsername());
+			    }
+			});
+
+			//Li aggiungo alla lista delle richieste in attesa
+			//TODO Creare la lista delle richieste in attesa
+		}
+
+		private void handlePlayListResponse(Message message) {
+			PlayListResponse playListResponse = (PlayListResponse) message;
+			
+	    	
+	    	Platform.runLater(() -> {
+			    if (CurrentController.controller != null) {
+			    	((LobbyController) CurrentController.controller).addPlayers(playListResponse.getListOfPlayer());
+			    }
+			});
+			
+		}
+
+		private void handleChangeUsernameResponse(Message message) {
+			ChangeUsernameResponse response = (ChangeUsernameResponse) message;
+			
+			if(response.getStatus() == ChangeUsernameResult.ok) {
+				Platform.runLater(() -> {
+				    if (CurrentController.controller != null) {
+				    	((LobbyController) CurrentController.controller).updateUsername();
+				    }
+				});
+				
+				return;
+			}
+			
+			Platform.runLater(() -> {
+			    if (CurrentController.controller != null) {
+			    	((LobbyController) CurrentController.controller).handleUsernameTaken();
+			    }
+			});
+			
+			
+		}
+    
+    private void handleGameEnd(Message message) {
+    	GameEnd gameEnd = (GameEnd) message;
+    	
+    	//Imposto lo status del client a free
+    	this.status = Status.free;
+    	
+    	//Mostro la scena della fine del gioco
+    	MainApplication.showGameEnd(gameEnd.getResult(),gameEnd.getInfo());
+	}
+
+	private void handleMove(Message message) {
+    	Move move = (Move) message;
+    	
+    	Platform.runLater(() -> {
+		    if (CurrentController.controller != null) {
+		    	((GameController) CurrentController.controller).placeEnemyMove(move.getColumn());
+		    }
+		});
+		
+	}
+
+	private void handleMoveResult(Message message) {
+		MoveResult moveResult = (MoveResult) message;
+		
+		
+		//Se la mossa è valida
+		if(moveResult.getStatus() == MoveResultStatus.ok ) {
+			
+			Platform.runLater(() -> {
+			    if (CurrentController.controller != null) {
+			    	((GameController) CurrentController.controller).placeYourMove();
+			    }
+			});
+			
+			return;
+		}
+		
+		//Mossa non valida
+		if(moveResult.getStatus() == MoveResultStatus.invalid_move ) {
+			
+			Platform.runLater(() -> {
+			    if (CurrentController.controller != null) {
+			    	((GameController) CurrentController.controller).handleInvalidMove();
+			    }
+			});
+			
+			return;
+		}
+		
+		//Non è il tuo turno
+		if(moveResult.getStatus() == MoveResultStatus.not_your_turn ) {
+			
+			Platform.runLater(() -> {
+			    if (CurrentController.controller != null) {
+			    	((GameController) CurrentController.controller).handleNotYourTurn();
+			    }
+			});
+			
+			return;
+		}		
+		
+		
+	}
+
+	
 
     public boolean isConnected(){								// Permette controllo stato connessione
         return connected;

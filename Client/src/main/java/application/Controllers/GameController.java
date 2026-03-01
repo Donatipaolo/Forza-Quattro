@@ -4,7 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import protocol.Move;
 import enums.GameEndResult;
+import client.NetworkService;
+import data.Queue;
 import enums.GameEndInfo;
 
 enum Color{
@@ -16,6 +19,8 @@ public class GameController {
 
     @FXML
     private GridPane grid;
+    private Queue sendQueue;
+    private int lastMove;
 
     //La dimensione della griglia
     private static final int ROWS = 6;
@@ -72,39 +77,40 @@ public class GameController {
         }
     }
 
+    private void setQueue(Queue sendQueue) {
+    	this.sendQueue = sendQueue;
+    }
+    
     private void newMove(int column) {
-    	//Controllo se è il tuo turno
-    	if(!myTurn)
+    	//Controlla se è il tuo turno
+    	if(!myTurn) {
+    		handleNotYourTurn();
     		return;
+    	}
     	
     	//Controllo se la mossa non è valida
     	if(!isColumnFree(column)) {
     		handleInvalidMove();
+    		return;
     	}
     	
-    	//TODO Invio la richiesta al ClientController/NetworkService
-    	//Aspetto la risposta
+    	//Invio la risposta al NetworkService 
+    	sendQueue.insert(new Move(column));
     	
-    	//NEL CASO POSITIVO
-    	dropDisc(column,myColor);
-    	myTurn = !myTurn;
+    	//Cambio il turno
+    	myTurn = false;
     	
-    	//NEL CASO NEGATIVO
-    	//SE È INVALID MOVE
-    	handleInvalidMove();
-    	
-    	//SE È NOT YOUR TURN
-    	//o inviamo una disconnect
-    	//o semplicemente invertiamo il turno (sperando che non siano sfalsati i due client e server)
+    	lastMove = column;
     }
     
-    private void handleInvalidMove() {
+    public void handleInvalidMove() {
 		//Bisogna mostrare a schermo che la mossa non è valida per un 2-3 secondi
-		
+		System.out.println("Mossa non valida inserirne un altra");
+		myTurn = true;
 	}
     
-    private void gameEnd(GameEndResult gameEndResult, GameEndInfo gameEndInfo) {
-    	//cambiare la scena a quella di fine gioco e mostrare i diversi messaggi di info
+    public void handleNotYourTurn() {
+    	System.out.println("Non è il tuo turno aspetta!");
     }
 
 	private boolean isColumnFree(int column) {
@@ -117,6 +123,14 @@ public class GameController {
 		return true;
 	}
 
+	public void placeYourMove() {
+		dropDisc(lastMove,myColor);
+	}
+	
+	public void placeEnemyMove(int column) {
+		dropDisc(column,otherColor);
+	}
+	
 	//Mostra a schermo la mossa
 	private void dropDisc(int col, Color color) {
 

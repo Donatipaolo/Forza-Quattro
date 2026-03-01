@@ -35,6 +35,7 @@ public class MainApplication extends Application {
         LobbyScene lobby = new LobbyScene();
         primaryStage.setScene(lobby.getScene());
         primaryStage.setTitle("Game Lobby - Modern ");
+        CurrentController.controller = lobby.getController();
         primaryStage.show();
     }
     
@@ -42,6 +43,7 @@ public class MainApplication extends Application {
         GameEndScene gameEndScene = new GameEndScene(result,extraInfo);
         primaryStage.setScene(gameEndScene.getScene());
         primaryStage.setTitle("Game End");
+        CurrentController.controller = gameEndScene.getController();
         primaryStage.show();
     }
     
@@ -49,6 +51,7 @@ public class MainApplication extends Application {
     	GameScene gameScene = new GameScene();
         primaryStage.setScene(gameScene.getScene());
         primaryStage.setTitle("Game");
+        CurrentController.controller = gameScene.getController();
         primaryStage.show();
     }
     
@@ -56,6 +59,7 @@ public class MainApplication extends Application {
     	ServerErrorScene serverErrorScene = new ServerErrorScene();
     	primaryStage.setScene(serverErrorScene.getScene());
         primaryStage.setTitle("Game");
+        CurrentController.controller = serverErrorScene.getController();
         primaryStage.show();
     }
 }

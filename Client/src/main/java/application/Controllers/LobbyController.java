@@ -1,9 +1,17 @@
 package application.Controllers;
 
+import java.util.ArrayList;
+
+import data.Player;
+import data.Queue;
+import enums.ChallengeResponseStatus;
+import enums.Status;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import protocol.ChallengeResponse;
+import protocol.ChangeUsernameRequest;
 
 public class LobbyController {
 
@@ -13,13 +21,27 @@ public class LobbyController {
     @FXML private VBox incomingRequests;
     @FXML private VBox sentRequests;
 
+    private Queue sendQueue;
+    private boolean nameSended = false;
+    private boolean gameAccepted = false;
+    private String username;
+    private String newUsername;
+    
     @FXML
     public void initialize() {
-        // Qui caricheresti i dati reali. Esempio di placeholder:
-        addPlayerToUI("Mario", "FREE");
-        addPlayerToUI("Luigi", "IN GAME");
+    	
     }
 
+    private void setUsername(String username) {
+    	this.username = username;
+    }
+    
+    private void setSendQueue(Queue sendQueue) {
+    	this.sendQueue = sendQueue;
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    
     private void addPlayerToUI(String name, String status) {
         HBox row = new HBox(15);
         row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
@@ -46,7 +68,26 @@ public class LobbyController {
         playersList.getChildren().add(row);
     }
 
-    private void sendRequest(String playerName) {
+    //TODO Aggiungere il bottone di aggiornamento della lista dei player
+    
+    public void addPlayers(ArrayList<Player> players) {
+    	
+    	clearPlayersUI();
+    	
+    	for(Player player : players) {
+    		String status = player.getStatus() == Status.free? "FREE" : "IN GAME";
+    		addPlayerToUI(player.getUsername(),status);
+    	}
+    }
+    
+    private void clearPlayersUI() {
+        playersList.getChildren().clear();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    
+	private void sendRequest(String playerName) {
+		
         // Creiamo una card per la richiesta inviata
         HBox requestCard = new HBox(15);
         requestCard.getStyleClass().add("request-card");
@@ -65,23 +106,42 @@ public class LobbyController {
         Text status = new Text("Waiting...");
         status.getStyleClass().add("text-waiting");
 
-        // Pulsante per annullare la richiesta (opzionale ma consigliato per la UX)
-        Button cancelBtn = new Button("✕");
-        cancelBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #ff5252; -fx-cursor: hand;");
-        cancelBtn.setOnAction(e -> sentRequests.getChildren().remove(requestCard));
-
-        requestCard.getChildren().addAll(prefix, name, spacer, status, cancelBtn);
+        requestCard.getChildren().addAll(prefix, name, spacer, status);
         
-        // Aggiungiamo la card al contenitore FXML
+        requestCard.setUserData(name);
+        
         sentRequests.getChildren().add(requestCard);
     }
+	
+	public void handleClientRequestedNotFound(String username) {
+		//Rimuove solo la richiesta inviata con quell'username
+		sentRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
+		System.out.println("Il client non è stato trovato prova a riaggiornare la lista dei player connessi");
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	//Funzione che viene eseguita quando il server invia una risposta di declino ad una nostra richiesta precedentemente fatta
+	public void handleResultDeclined(String username) {
+		System.out.println("richiesta declinata");
+		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
+	}
+	
+	public void handleClientAcceptedNotFound(String username) {
+		System.out.println("La partita accettata è stata rifiutata, ricarica la lista dei client");
+		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
+		gameAccepted = false;
+	}
+	
 
-    private void addIncomingRequest(String fromPlayer) {
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	public void addIncomingRequest(String username) {
         HBox card = new HBox(15);
         card.getStyleClass().add("request-card");
         card.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        Text msg = new Text(fromPlayer + " wants to play!");
+        Text msg = new Text(username + " wants to play!");
         msg.getStyleClass().add("text-player-name");
 
         Region spacer = new Region();
@@ -89,30 +149,98 @@ public class LobbyController {
 
         Button acceptBtn = new Button("Accept");
         acceptBtn.getStyleClass().add("button-accept");
+        acceptBtn.setOnAction(e -> handleAcceptRequest(username));
         
         Button declineBtn = new Button("Decline");
         declineBtn.getStyleClass().add("button-reject");
+        declineBtn.setOnAction(e -> handleDeclineRequest(username));
 
         card.getChildren().addAll(msg, spacer, acceptBtn, declineBtn);
+        
+        card.setUserData(username);
+        
         incomingRequests.getChildren().add(card);
     }
+	
+	public void removeIncomingRequest(String username) {
+		//Rimuove solo la richiesta inviata con quell'username
+		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
+	}
+	
+	private void handleDeclineRequest(String username) {
+		sendQueue.insert(new ChallengeResponse(ChallengeResponseStatus.refused, username));
+		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
+	}
+	
+	private void handleAcceptRequest(String username) {
+		if(gameAccepted) {
+			handleGameJustAccepted();
+			return;
+		}
+		
+		sendQueue.insert(new ChallengeResponse(ChallengeResponseStatus.ok, username));
+		gameAccepted = true;
+	}
     
-    @FXML
+	private void handleGameJustAccepted() {
+		System.out.println("Gioco appena accettato non eseguire questa operazione");
+		
+	}
+
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	
+    
+	@FXML
     private void handleUpdateName() {
-        String newName = nameField.getText().trim();
-        
-        if (!newName.isEmpty()) {
-            // Aggiorna la label del profilo
-            currentNameLabel.setText(newName);
-            
-            // Pulizia campo input
-            nameField.clear();
-            
-            // Logica opzionale: feedback visivo o invio al server
-            System.out.println("Username changed to: " + newName);
-        } else {
-            // Alert o stile rosso se il campo è vuoto
+    	
+    	String newName = nameField.getText().trim();
+    	
+    	if (newName.isEmpty()) {
+    		// Alert o stile rosso se il campo è vuoto
             nameField.setStyle("-fx-border-color: #ff5252;");
-        }
+    		return;
+    	}
+    	
+    	// Pulizia campo input
+        nameField.clear();
+    	
+    	if(gameAccepted) {
+    		handleGameJustAccepted();
+    	}
+    	
+		if(nameSended) {
+			
+    		handleNameSended();
+    		return;
+    	}
+    	
+		 nameSended = true;
+        
+       
+        //Invio la richiesta
+        sendQueue.insert(new ChangeUsernameRequest(newName));
+        this.newUsername = newName;
     }
+    
+    public void updateUsername() {
+    	refuseAllIncomingRequest();
+    	currentNameLabel.setText(newUsername);
+    	
+    }
+    
+    public void handleUsernameTaken() {
+    	System.out.println("L'username inserito è già stato preso");
+    }
+
+	private void handleNameSended() {
+		System.out.println("Il server sta ancora elaborando la precedente risposta aspetta un attimo");
+		
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void refuseAllIncomingRequest() {
+		
+	}
 }

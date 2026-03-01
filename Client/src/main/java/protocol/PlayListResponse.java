@@ -9,7 +9,7 @@ import enums.MessageType;
 public class PlayListResponse implements Message{
 	
 	private MessageType type;
-	private List<Player> listOfPlayer;
+	private ArrayList<Player> listOfPlayer;
 	
 	public PlayListResponse() {}
 	
@@ -23,7 +23,7 @@ public class PlayListResponse implements Message{
 		return this.type;
 	}
 
-	public List<Player> getListOfPlayer(){
+	public ArrayList<Player> getListOfPlayer(){
 		return this.listOfPlayer;
 	}
 	
@@ -31,7 +31,7 @@ public class PlayListResponse implements Message{
 		this.type = MessageType.play_list_response;
 	}
 	
-	public void setListOfPlayer(List<Player> listOfPlayer) {
+	public void setListOfPlayer(ArrayList<Player> listOfPlayer) {
 		this.listOfPlayer = listOfPlayer;
 		
 	}
