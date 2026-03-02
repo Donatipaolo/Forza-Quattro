@@ -1,5 +1,6 @@
 package application.Controllers;
 
+import application.CurrentController;
 import application.MainApplication;
 import data.Queue;
 import enums.GameEndInfo;
@@ -58,6 +59,7 @@ public class GameEndController {
     private void handleBackToLobby() {
         // Qui chiameresti il metodo nel Main per cambiare scena
         MainApplication.showLobby(username,sendQueue);
+        ((LobbyController)CurrentController.controller).handleRefreshPlayers();
     }
 
 	public void setUsername(String username) {

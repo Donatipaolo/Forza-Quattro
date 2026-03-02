@@ -30,3 +30,30 @@
 .player2 {
     -fx-fill: #ffd740;
 }
+
+.info-panel {
+    -fx-background-color: rgba(50, 50, 50, 0.8); /* Grigio scuro semitrasparente */
+    -fx-background-radius: 15;
+    -fx-margin: 10;
+}
+
+.label-static {
+    -fx-text-fill: #aaaaaa;
+    -fx-font-size: 16px;
+}
+
+.label-dynamic {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* Stile simile al valore 'tie' del gameEnd */
+.status-indicator {
+    -fx-text-fill: #ffcc00; /* Giallo/Oro per evidenziare il turno */
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 15 5 15;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 10;
+}

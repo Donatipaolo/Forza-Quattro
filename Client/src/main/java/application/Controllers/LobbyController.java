@@ -75,7 +75,7 @@ public class LobbyController {
     }
 
     @FXML
-    private void handleRefreshPlayers() {
+    public void handleRefreshPlayers() {
     	sendQueue.insert(new PlayListRequest());
     }
     

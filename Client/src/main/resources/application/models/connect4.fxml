@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="application.Controllers.GameController"
             prefWidth="900" prefHeight="700"
             styleClass="root">
+
+    <top>
+        <VBox alignment="CENTER" spacing="10" styleClass="info-panel">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <HBox alignment="CENTER" spacing="5">
+                <Label text="Opponent: " styleClass="label-static"/>
+                <Label fx:id="opponentNameLabel" text="..." styleClass="label-dynamic"/>
+            </HBox>
+
+            <Label fx:id="turnStatusLabel" text="Waiting for opponent..." styleClass="status-indicator"/>
+        </VBox>
+    </top>
 
     <center>
         <StackPane alignment="CENTER">

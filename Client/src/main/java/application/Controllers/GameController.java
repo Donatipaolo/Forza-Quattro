@@ -1,11 +1,15 @@
 package application.Controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import protocol.Move;
 import enums.GameEndResult;
+
+
 import application.MainApplication;
 import application.Notification;
 import client.NetworkService;
@@ -21,6 +25,13 @@ public class GameController {
 
     @FXML
     private GridPane grid;
+    
+    @FXML
+    private Label opponentNameLabel;
+    
+    @FXML
+    private Label turnStatusLabel;
+    
     private Queue sendQueue;
     private int lastMove;
 
@@ -42,6 +53,20 @@ public class GameController {
         createGrid();
     }
 
+    public void updateGameStatus(boolean isMyTurn) {
+        Platform.runLater(() -> {
+            opponentNameLabel.setText(enemyUsername);
+            
+            if (isMyTurn) {
+                turnStatusLabel.setText("YOUR TURN");
+                turnStatusLabel.setStyle("-fx-text-fill: #00ff00;"); // Verde per il tuo turno
+            } else {
+                turnStatusLabel.setText("OPPONENT'S TURN");
+                turnStatusLabel.setStyle("-fx-text-fill: #ff4444;"); // Rosso per l'avversario
+            }
+        });
+    }
+    
     private void createGrid() {
 
         for (int row = 0; row < ROWS; row++) {
@@ -102,6 +127,7 @@ public class GameController {
     	sendQueue.insert(new Move(column));
     	//Cambio il turno
     	myTurn = false;
+    	updateGameStatus(false);
     	
     	lastMove = column;
     }
@@ -110,6 +136,7 @@ public class GameController {
 		//Bisogna mostrare a schermo che la mossa non è valida per un 2-3 secondi
     	Notification.showPopUp(MainApplication.getStage().getScene(), "Mossa non valida inserirne un altra");
 		myTurn = true;
+		updateGameStatus(true);
 	}
     
     public void handleNotYourTurn() {
@@ -134,6 +161,7 @@ public class GameController {
 	public void placeEnemyMove(int column) {
 		dropDisc(column,otherColor);
 		myTurn = true;
+		updateGameStatus(true);
 	}
 	
 	//Mostra a schermo la mossa
@@ -178,6 +206,7 @@ public class GameController {
 	
 	public void setYourMove(Boolean move) {
 		this.myTurn = move;
+		updateGameStatus(move);
 		
 		myColor = move == true? Color.red:Color.yellow;
 		otherColor = myColor == Color.red?Color.yellow:Color.red;
