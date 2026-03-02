@@ -24,8 +24,11 @@ public class Server extends Thread implements Runnable{
 		
 		this.clientList = clientlist;
 		
+		ConfigLoader configLoader = new ConfigLoader("src/main/resources/configuration.xml");
+		
+		
 		try {
-			this.serverSocket = new ServerSocket(20000);
+			this.serverSocket = new ServerSocket(configLoader.getPort());
 			this.serverSocket.setReuseAddress(true);
 			
 		} catch (IOException e) {
