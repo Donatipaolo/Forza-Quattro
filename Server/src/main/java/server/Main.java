@@ -25,7 +25,7 @@ public class Main {
 		Server server = new Server(ClientHandler.clientList);
 		server.start();
 				
-		System.out.println("Server avviato in ascolto sulla porta 20000 ...");
+		System.out.println("Server avviato in ascolto sulla porta " + server.getPort() +"...");
 	}
 
 }

@@ -64,6 +64,10 @@ public class ClientHandler extends Thread implements Runnable{
 		// invio il messaggio di inizializzazione della connessione
 		client.write(new ServerConnectionResult(client.getUsername()));
 		
+		for(Client c : clientList) {
+			c.write(new PlayListResponse(clientList.getPlayerList()));
+		}
+		
 		// ciclo lettura richiesta ed elaborazione risposta
 		while(true) {
 			
@@ -149,6 +153,14 @@ public class ClientHandler extends Thread implements Runnable{
 				refusePendingRequest(p,client);
 			
 			client.setUsername(msg.getNewUsername());
+			
+			for(Client c : clientList) {
+				if(c == client) {
+					continue;
+				}
+				c.write(new PlayListResponse(clientList.getPlayerList()));
+			}
+			
 			return (new ChangeUsernameResponse(ChangeUsernameResult.ok));
 		}
 		
@@ -220,7 +232,7 @@ public class ClientHandler extends Thread implements Runnable{
 				refusePendingRequest(p,client);
 			
 			for(PendingRequest p : pendingRequestList.popPendingRequests(enemy))
-				refusePendingRequest(p,client);
+				refusePendingRequest(p,enemy);
 			
 		}
 		
@@ -249,12 +261,16 @@ public class ClientHandler extends Thread implements Runnable{
 	//TODO CONTROLLA SE È CORRETTO
 	private void refusePendingRequest(PendingRequest pendingRequest,Client client) {
 		
+		Client enemy = client == pendingRequest.getSender() ? pendingRequest.getDestination() : pendingRequest.getSender();
+		
 		if(client == pendingRequest.getSender()) {
 			client.write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,pendingRequest.getSender().getUsername()));
+			enemy.write(new ChallengeResult(ChallengeResultStatus.client_not_found,MoveValue.none,pendingRequest.getSender().getUsername()));
 			return;
 		}
 		
-		pendingRequest.getSender().write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,client.getUsername()));
+		enemy.write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,client.getUsername()));
+		client.write(new ChallengeResult(ChallengeResultStatus.client_not_found,MoveValue.none,enemy.getUsername()));
 		
 	}
 	

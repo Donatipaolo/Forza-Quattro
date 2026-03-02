@@ -26,7 +26,7 @@ public class NetworkService {
 		readQueue = new Queue();
 		
 		// Carichiamo la configurazione
-        ConfigLoader config = new ConfigLoader("config.xml");
+        ConfigLoader config = new ConfigLoader("src/main/resources/configuration.xml");
         String address = config.getAddress();
         int port = config.getPort();
 		
@@ -88,17 +88,25 @@ class SendThread extends Thread implements Runnable{
 	private PrintWriter out;
 	private boolean exit = false;
 	
-	public SendThread(Queue queue,PrintWriter out) {
+	public SendThread(Queue queue, PrintWriter out) {
 		super("Send Thread");
 		
 		this.queue = queue;
 		this.out = out;
 	}
 	
+	public synchronized boolean getExit() {
+		return exit;
+	}
+	
+	public synchronized void setExit(boolean exit) {
+		this.exit = exit;
+	}
+	
 	@Override
 	public void run() {
 		
-		while(!exit) {
+		while(!getExit()) {
 			Message msg = queue.remove();
 			
 			if(msg == null)
@@ -115,7 +123,7 @@ class SendThread extends Thread implements Runnable{
 	}
 	
 	public void exit() {
-		exit = true;
+		setExit(true);
 		queue.insert(null);
 	}
 }
@@ -127,16 +135,24 @@ class ListenerThread extends Thread implements Runnable{
 	private boolean exit = false;
 	
 	public ListenerThread(Queue queue,BufferedReader in) {
-		super("Send Thread");
+		super("ListnerThread");
 		this.in = in;
 		
 		this.queue = queue;
 	}
 	
+	public synchronized boolean getExit() {
+		return exit;
+	}
+	
+	public synchronized void setExit(boolean exit) {
+		this.exit = exit;
+	}
+	
 	@Override
 	public void run() {
 		try {
-			while(!exit) {
+			while(!getExit()) {
 				Message msg = MessageFormatterParser.fromJson(in.readLine());
 				
 				queue.insert(msg);
@@ -147,7 +163,6 @@ class ListenerThread extends Thread implements Runnable{
 	}
 	
 	public void exit() {
-		exit = true;
-		
+		setExit(true);
 	}
 }

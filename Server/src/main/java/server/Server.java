@@ -17,6 +17,7 @@ public class Server extends Thread implements Runnable{
 	
 	private ServerSocket serverSocket;
 	private ClientList clientList;
+	private ConfigLoader configLoader;
 	
 	public Server(ClientList clientlist){
 		
@@ -24,11 +25,11 @@ public class Server extends Thread implements Runnable{
 		
 		this.clientList = clientlist;
 		
-		ConfigLoader configLoader = new ConfigLoader("src/main/resources/configuration.xml");
+		configLoader = new ConfigLoader("src/main/resources/configuration.xml");
 		
 		
 		try {
-			this.serverSocket = new ServerSocket(configLoader.getPort());
+			this.serverSocket = new ServerSocket(getPort());
 			this.serverSocket.setReuseAddress(true);
 			
 		} catch (IOException e) {
@@ -46,9 +47,10 @@ public class Server extends Thread implements Runnable{
 		}
 	}
 
+	
 	private void server() throws IOException{
 		
-		//Ascolto sulla porta 20000 l'arrivo di nuovi client e delego la gestione ad un altro componente
+		//Ascolto sulla porta l'arrivo di nuovi client e delego la gestione ad un altro componente
 		while(true) {
 			//Aspetto l'arrivo di un nuovo client dalla socket
 			Socket clientSocket = this.serverSocket.accept();
@@ -71,6 +73,10 @@ public class Server extends Thread implements Runnable{
 	        username = "username" + String.format("%05d", random.nextInt(100000));
 	    } while (!this.clientList.isUsernameUnique(username));
 	    return username;
+	}
+	
+	public int getPort() {
+		return configLoader.getPort();	
 	}
 	
 	public synchronized void exit() {

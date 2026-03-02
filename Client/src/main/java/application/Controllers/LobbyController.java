@@ -222,13 +222,6 @@ public class LobbyController {
 		gameAccepted = true;
 	}
     
-	//Funzione che viene avviata quando, dopo aver accettato una richiesta, l'avversario non è più disponibile
-	public void handleClientAcceptedNotFound(String opponentName) {
-		
-		Notification.showPopUp(MainApplication.getStage().getScene(), "La partita accettata è stata rifiutata, ricarica la lista dei client");
-		incomingRequests.getChildren().removeIf(node -> opponentName.equals(node.getUserData()));
-		gameAccepted = false;
-	}
 	
 	private void handleGameJustAccepted() {
 		Notification.showPopUp(MainApplication.getStage().getScene(), "Gioco appena accettato non eseguire questa operazione");

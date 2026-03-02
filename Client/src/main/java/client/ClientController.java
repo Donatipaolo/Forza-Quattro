@@ -26,13 +26,10 @@ public class ClientController extends Thread implements Runnable{
 
     public ClientController(Queue sendQueue, Queue readQueue){
     	super("Client Controller");
-    	
-    	//Il service network viene creato nel main insieme a tutti gli altri thread quindi non è corretto crearlo qui
-    	
+    
         this.sendQueue = sendQueue;
         this.readQueue = readQueue;
     
-
         status = Status.not_connected;
     }
 
@@ -43,7 +40,6 @@ public class ClientController extends Thread implements Runnable{
             Message message = readQueue.remove();			// Estrae messaggio ricevuto
             
              if(message==null){
-                //TODO Controllare se questo caso è effettivamente possibile
             	 continue;
              }
              
@@ -210,7 +206,7 @@ public class ClientController extends Thread implements Runnable{
 	    			}
 	    			
 	    		    if (CurrentController.controller != null) {
-	    		    	((LobbyController) CurrentController.controller).handleClientAcceptedNotFound(challengeRequest.getUsername());
+	    		    	((LobbyController) CurrentController.controller).handleClientRequestedNotFound(challengeRequest.getUsername());
 	    		    }
 	    		});
 	    		return;
