@@ -16,7 +16,7 @@ public class ServerErrorScene {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("models/server_error.fxml"));
             Parent root = loader.load();
-            this.scene = new Scene(root, 1000, 750);
+            this.scene = new Scene(root);
             this.controller = loader.getController();
         } catch (IOException e) {
             e.printStackTrace();

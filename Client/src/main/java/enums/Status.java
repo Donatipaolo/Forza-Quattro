@@ -2,5 +2,6 @@ package enums;
 
 public enum Status{
 	free,
-	in_game
+	in_game,
+	not_connected
 }

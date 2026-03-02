@@ -1,6 +1,7 @@
 package application.Controllers;
 
 import application.MainApplication;
+import data.Queue;
 import enums.GameEndInfo;
 import enums.GameEndResult;
 import javafx.fxml.FXML;
@@ -10,6 +11,8 @@ public class GameEndController {
 
     @FXML private Text resultTitle;
     @FXML private Text additionalInfo;
+	private String username;
+	private Queue sendQueue;
 
     /**
      * Metodo per configurare la schermata dinamicamente
@@ -54,6 +57,15 @@ public class GameEndController {
     @FXML
     private void handleBackToLobby() {
         // Qui chiameresti il metodo nel Main per cambiare scena
-        MainApplication.showLobby();
+        MainApplication.showLobby(username,sendQueue);
     }
+
+	public void setUsername(String username) {
+		this.username = username;
+		
+	}
+	
+	public void setSendQueue(Queue sendQueue) {
+		this.sendQueue = sendQueue;
+	}
 }

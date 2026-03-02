@@ -72,6 +72,21 @@ public class PendingRequestList implements Iterable<PendingRequest>{
 		return requests;
 	}
 	
+	public synchronized ArrayList<PendingRequest> popPendingRequests(Client client){
+		ArrayList<PendingRequest> requests = new ArrayList<PendingRequest>();
+		for(PendingRequest p : pendingRequestList) {
+			if(p.getSender() == client || p.getDestination() == client) {
+				requests.add(p);
+			}
+		}
+		
+		for(PendingRequest p: requests) {
+			pendingRequestList.remove(p);
+		}
+		
+		return requests;
+	}
+	
 	public synchronized boolean isInPendingRequestList(Client sender, Client destination) {
 		for(PendingRequest p : pendingRequestList) {
 			if(p.getSender() == sender && p.getDestination() == destination) {

@@ -30,11 +30,15 @@
 	</top>
 
     <left>
-        <VBox spacing="15" prefWidth="300" style="-fx-padding: 0 0 20 20;">
+    	<VBox spacing="15" prefWidth="300" style="-fx-padding: 0 0 20 20;">
+        	<HBox alignment="CENTER_LEFT" spacing="10">
             <Label text="Connected Players" style="-fx-text-fill: white; -fx-font-size: 16;"/>
-            <VBox fx:id="playersList" spacing="10" VBox.vgrow="ALWAYS" styleClass="glass-panel"/>
-        </VBox>
-    </left>
+            <Region HBox.hgrow="ALWAYS" /> <Button text="↻" onAction="#handleRefreshPlayers" styleClass="button-refresh"/>
+        	</HBox>
+        
+        	<VBox fx:id="playersList" spacing="10" VBox.vgrow="ALWAYS" styleClass="glass-panel"/>
+    	</VBox>
+	</left>
 
     <center>
         <VBox spacing="20" style="-fx-padding: 0 20 20 20;">

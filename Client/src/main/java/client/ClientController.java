@@ -5,6 +5,7 @@ import enums.ChallengeResultStatus;
 import enums.ChangeUsernameResult;
 import enums.MessageType;
 import enums.MoveResultStatus;
+import enums.MoveValue;
 import enums.Status;
 import javafx.application.Platform;
 import application.CurrentController;
@@ -20,34 +21,25 @@ public class ClientController extends Thread implements Runnable{
     private Queue sendQueue;									// Coda messaggi da inviare
     private Queue readQueue;									// Coda messaggi ricevuti
 
-    private boolean connected;
-    //TODO da capire l' utilità di questa variabile
-    //Non si è ancora deciso che cosa fare in caso di disconnessione del server queste sono le possibilità:
-    // - Chiudere direttamente il gioco
-    // - Provare a riconnettersi all' infinito o fino ad un intervallo di tempo prestabilito 
-    //   (più bellino ma inutilmente complesso visto il nostro obbiettivo)
-    // - Mostrare a schermo che il server si è disconnesso e aspettare che il client prema qualcosa per chiudere il gioco
-    //   (Secondo me è la meglio ma sentiamo gli altri)
-    
     private Status status;
+    private boolean exit = false;
 
-
-    public ClientController(){
+    public ClientController(Queue sendQueue, Queue readQueue){
     	super("Client Controller");
     	
     	//Il service network viene creato nel main insieme a tutti gli altri thread quindi non è corretto crearlo qui
     	
-        sendQueue = networkService.getSendQueue();
-        readQueue = networkService.getReadQueue();
+        this.sendQueue = sendQueue;
+        this.readQueue = readQueue;
+    
 
-        connected = true;
-        status = Status.free;
+        status = Status.not_connected;
     }
 
     @Override
     public void run(){
     	
-        while(connected){
+        while(!exit){
             Message message = readQueue.remove();			// Estrae messaggio ricevuto
             
              if(message==null){
@@ -58,12 +50,29 @@ public class ClientController extends Thread implements Runnable{
              //Controllo il tipo
              if(status == Status.free)
             	  handleMessageLobby(message);
-             else 
+             else if(status == Status.in_game)
             	 handleMessageGame(message);
+             else
+            	 handleMessageNotConnected(message);
         }
     }
 
-    private void handleMessageLobby(Message message){
+    private void handleMessageNotConnected(Message message) {
+    	MessageType type = message.getType();
+    	
+        switch(type) {
+            case server_connection_result:
+                handleServerConnectionResult(message);
+                break;
+            default:
+			System.out.println("Messaggio non gestito " + type);
+			break;
+        }
+
+		
+	}
+
+	private void handleMessageLobby(Message message){
 
         MessageType type = message.getType();
         switch(type) {
@@ -115,20 +124,63 @@ public class ClientController extends Thread implements Runnable{
     }
     }
 	
-	 private void handleChallengeResult(Message message) {
-	    	ChallengeResult challengeRequest = (ChallengeResult) message;
+	
+	
+	private void handleServerConnectionResult(Message message) {
+		ServerConnectionResult connectionResult = (ServerConnectionResult) message;
+		Platform.runLater(()->{
 			
+			if(!(CurrentController.controller instanceof LobbyController)) {
+				System.out.println("Errore instanza del controller sbagliata");
+				return;
+			}
+				
+			
+			((LobbyController)CurrentController.controller).setUsername(connectionResult.getUsername());
+			status = Status.free;
+		});
+
+	}
+	
+	 private void handleChallengeResult(Message message) {
+	    	ChallengeResult challengeRequest = (ChallengeResult) message; 
+			
+	    	Boolean turn = challengeRequest.getFirstMove() == MoveValue.you? true: false;
+	    	
 	    	if(challengeRequest.getStatus() == ChallengeResultStatus.ok) {
 	    		this.status = Status.in_game;
 	    		
-	    		//TODO Modificare la funzione per stampare il nome dell'avversario
-	    		MainApplication.showGame();
+	    		Platform.runLater(()->{
+	    			
+	    			if(!(CurrentController.controller instanceof LobbyController)) {
+	    				System.out.println("Errore instanza del controller sbagliata");
+	    				return;
+	    			}
+	    			
+	    			//TODO Modificare la scena per stampare il nome dell'avversario e il proprio
+		    		MainApplication.showGame(((LobbyController)CurrentController.controller).getUsername(),challengeRequest.getUsername(),sendQueue);
+		    		
+		    		if(!(CurrentController.controller instanceof GameController)) {
+	    				System.out.println("Errore instanza del controller sbagliata");
+	    				return;
+	    			}
+		    		
+		    		((GameController)CurrentController.controller).setYourMove(turn);
+		    		
+	    		});
 	    		
-	    		//rifiuto tutte le altre richieste
-	    		//TODO rifiutare tutte le richieste in arrivo ed eliminare quella che è stata accettata
+	    		return;
+	    		//Il server si occupa di rifiutare tutte le altre richieste
 	    	}
 	    	
+	    	//se viene rifiutata prima elimino la richiesta dalla lista di richieste
 	    	Platform.runLater(() -> {
+	    		
+	    		if(!(CurrentController.controller instanceof LobbyController)) {
+    				System.out.println("Errore instanza del controller sbagliata");
+    				return;
+    			}
+	    		
 			    if (CurrentController.controller != null) {
 			    	((LobbyController) CurrentController.controller).removeIncomingRequest(challengeRequest.getUsername());
 			    }
@@ -136,6 +188,12 @@ public class ClientController extends Thread implements Runnable{
 	    	
 	    	if(challengeRequest.getStatus() == ChallengeResultStatus.refused) {
 	    		Platform.runLater(() -> {
+	    			
+	    			if(!(CurrentController.controller instanceof LobbyController)) {
+	    				System.out.println("Errore instanza del controller sbagliata");
+	    				return;
+	    			}
+	    			
 	    		    if (CurrentController.controller != null) {
 	    		    	((LobbyController) CurrentController.controller).handleResultDeclined(challengeRequest.getUsername());
 	    		    }
@@ -145,6 +203,12 @@ public class ClientController extends Thread implements Runnable{
 	    	
 	    	if(challengeRequest.getStatus() == ChallengeResultStatus.client_not_found) {
 	    		Platform.runLater(() -> {
+	    			
+	    			if(!(CurrentController.controller instanceof LobbyController)) {
+	    				System.out.println("Errore instanza del controller sbagliata");
+	    				return;
+	    			}
+	    			
 	    		    if (CurrentController.controller != null) {
 	    		    	((LobbyController) CurrentController.controller).handleClientAcceptedNotFound(challengeRequest.getUsername());
 	    		    }
@@ -157,13 +221,16 @@ public class ClientController extends Thread implements Runnable{
 			ChallengeRequest challengeRequest = (ChallengeRequest) message;
 			
 			Platform.runLater(() -> {
+				
+				if(!(CurrentController.controller instanceof LobbyController)) {
+					System.out.println("Errore instanza del controller sbagliata");
+					return;
+				}
+				
 			    if (CurrentController.controller != null) {
 			    	((LobbyController) CurrentController.controller).addIncomingRequest(challengeRequest.getUsername());
 			    }
 			});
-
-			//Li aggiungo alla lista delle richieste in attesa
-			//TODO Creare la lista delle richieste in attesa
 		}
 
 		private void handlePlayListResponse(Message message) {
@@ -171,6 +238,12 @@ public class ClientController extends Thread implements Runnable{
 			
 	    	
 	    	Platform.runLater(() -> {
+	    		
+	    		if(!(CurrentController.controller instanceof LobbyController)) {
+					System.out.println("Errore instanza del controller sbagliata");
+					return;
+				}
+	    		
 			    if (CurrentController.controller != null) {
 			    	((LobbyController) CurrentController.controller).addPlayers(playListResponse.getListOfPlayer());
 			    }
@@ -183,6 +256,12 @@ public class ClientController extends Thread implements Runnable{
 			
 			if(response.getStatus() == ChangeUsernameResult.ok) {
 				Platform.runLater(() -> {
+					
+					if(!(CurrentController.controller instanceof LobbyController)) {
+						System.out.println("Errore instanza del controller sbagliata");
+						return;
+					}
+					
 				    if (CurrentController.controller != null) {
 				    	((LobbyController) CurrentController.controller).updateUsername();
 				    }
@@ -192,6 +271,12 @@ public class ClientController extends Thread implements Runnable{
 			}
 			
 			Platform.runLater(() -> {
+				
+				if(!(CurrentController.controller instanceof LobbyController)) {
+					System.out.println("Errore instanza del controller sbagliata");
+					return;
+				}
+				
 			    if (CurrentController.controller != null) {
 			    	((LobbyController) CurrentController.controller).handleUsernameTaken();
 			    }
@@ -206,14 +291,30 @@ public class ClientController extends Thread implements Runnable{
     	//Imposto lo status del client a free
     	this.status = Status.free;
     	
-    	//Mostro la scena della fine del gioco
-    	MainApplication.showGameEnd(gameEnd.getResult(),gameEnd.getInfo());
+    	Platform.runLater(() -> {
+    		
+    		if(!(CurrentController.controller instanceof GameController)) {
+				System.out.println("Errore instanza del controller sbagliata");
+				return;
+			}
+    		
+    		//Mostro la scena della fine del gioco
+        	MainApplication.showGameEnd(gameEnd.getResult(),gameEnd.getInfo(),
+        			((GameController)CurrentController.controller).getMyUsername(),sendQueue);
+    	});
+    	
 	}
 
 	private void handleMove(Message message) {
     	Move move = (Move) message;
     	
     	Platform.runLater(() -> {
+    		
+    		if(!(CurrentController.controller instanceof GameController)) {
+				System.out.println("Errore instanza del controller sbagliata");
+				return;
+			}
+    		
 		    if (CurrentController.controller != null) {
 		    	((GameController) CurrentController.controller).placeEnemyMove(move.getColumn());
 		    }
@@ -229,6 +330,12 @@ public class ClientController extends Thread implements Runnable{
 		if(moveResult.getStatus() == MoveResultStatus.ok ) {
 			
 			Platform.runLater(() -> {
+				
+				if(!(CurrentController.controller instanceof GameController)) {
+					System.out.println("Errore instanza del controller sbagliata");
+					return;
+				}
+				
 			    if (CurrentController.controller != null) {
 			    	((GameController) CurrentController.controller).placeYourMove();
 			    }
@@ -241,6 +348,12 @@ public class ClientController extends Thread implements Runnable{
 		if(moveResult.getStatus() == MoveResultStatus.invalid_move ) {
 			
 			Platform.runLater(() -> {
+				
+				if(!(CurrentController.controller instanceof GameController)) {
+					System.out.println("Errore instanza del controller sbagliata");
+					return;
+				}
+				
 			    if (CurrentController.controller != null) {
 			    	((GameController) CurrentController.controller).handleInvalidMove();
 			    }
@@ -253,6 +366,12 @@ public class ClientController extends Thread implements Runnable{
 		if(moveResult.getStatus() == MoveResultStatus.not_your_turn ) {
 			
 			Platform.runLater(() -> {
+				
+				if(!(CurrentController.controller instanceof GameController)) {
+					System.out.println("Errore instanza del controller sbagliata");
+					return;
+				}
+				
 			    if (CurrentController.controller != null) {
 			    	((GameController) CurrentController.controller).handleNotYourTurn();
 			    }
@@ -266,8 +385,16 @@ public class ClientController extends Thread implements Runnable{
 
 	
 
-    public boolean isConnected(){								// Permette controllo stato connessione
-        return connected;
+    public void exit() {
+    	exit = true;
+
+    	readQueue.insert(null);
+    	try {
+			this.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     public boolean isInGame(){									// Permette controllo stato partita

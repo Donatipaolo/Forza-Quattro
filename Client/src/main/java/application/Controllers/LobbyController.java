@@ -2,6 +2,8 @@ package application.Controllers;
 
 import java.util.ArrayList;
 
+import application.MainApplication;
+import application.Notification;
 import data.Player;
 import data.Queue;
 import enums.ChallengeResponseStatus;
@@ -10,8 +12,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import protocol.ChallengeRequest;
 import protocol.ChallengeResponse;
 import protocol.ChangeUsernameRequest;
+import protocol.PlayListRequest;
 
 public class LobbyController {
 
@@ -32,15 +36,17 @@ public class LobbyController {
     	
     }
 
-    private void setUsername(String username) {
+    public void setUsername(String username) {
     	this.username = username;
+    	currentNameLabel.setText(username);
     }
     
-    private void setSendQueue(Queue sendQueue) {
+    public void setSendQueue(Queue sendQueue) {
     	this.sendQueue = sendQueue;
     }
     
     //////////////////////////////////////////////////////////////////////////////////////////////////
+    /// GESTIONE DELLA LISTA DEI CLIENT CONNESSI
     
     private void addPlayerToUI(String name, String status) {
         HBox row = new HBox(15);
@@ -68,13 +74,20 @@ public class LobbyController {
         playersList.getChildren().add(row);
     }
 
-    //TODO Aggiungere il bottone di aggiornamento della lista dei player
+    @FXML
+    private void handleRefreshPlayers() {
+    	sendQueue.insert(new PlayListRequest());
+    }
     
     public void addPlayers(ArrayList<Player> players) {
     	
     	clearPlayersUI();
     	
     	for(Player player : players) {
+    		
+    		if(player.getUsername().equals(username))
+    			continue;
+    		
     		String status = player.getStatus() == Status.free? "FREE" : "IN GAME";
     		addPlayerToUI(player.getUsername(),status);
     	}
@@ -85,8 +98,24 @@ public class LobbyController {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
+    /// GESTIONE DELLA LISTA DELLE RICHIESTE INVIATE
     
 	private void sendRequest(String playerName) {
+		
+		boolean alreadySent = sentRequests.getChildren().stream()
+                .anyMatch(node -> playerName.equals(node.getUserData()));
+
+        if (alreadySent) {
+        	Notification.showPopUp(MainApplication.getStage().getScene(), "Hai già inviato una richiesta a questo giocatore!");
+            return;
+        }
+
+        // Controllo di sicurezza: non posso sfidare me stesso
+        if (playerName.equals(this.username)) {
+        	Notification.showPopUp(MainApplication.getStage().getScene(), "Non puoi sfidare te stesso!");
+            return;
+        }
+		
 		
         // Creiamo una card per la richiesta inviata
         HBox requestCard = new HBox(15);
@@ -108,88 +137,107 @@ public class LobbyController {
 
         requestCard.getChildren().addAll(prefix, name, spacer, status);
         
-        requestCard.setUserData(name);
+        requestCard.setUserData(playerName);
         
         sentRequests.getChildren().add(requestCard);
+        
+        //Invio la richiesta
+        sendQueue.insert(new ChallengeRequest(playerName));
     }
 	
+	//Funzione che viene eseguita quando il client a cui abbiamo inviato una richiesta non viene trovato
 	public void handleClientRequestedNotFound(String username) {
 		//Rimuove solo la richiesta inviata con quell'username
 		sentRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
-		System.out.println("Il client non è stato trovato prova a riaggiornare la lista dei player connessi");
+		Notification.showPopUp(MainApplication.getStage().getScene(), "Il client non è stato trovato prova a riaggiornare la lista dei player connessi");
 	}
 	
-	/////////////////////////////////////////////////////////////////////////////////////////////////
+	public void removeAllSentRequest() {
+		sentRequests.getChildren().clear();
+	}
 	
 	//Funzione che viene eseguita quando il server invia una risposta di declino ad una nostra richiesta precedentemente fatta
-	public void handleResultDeclined(String username) {
-		System.out.println("richiesta declinata");
-		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
-	}
-	
-	public void handleClientAcceptedNotFound(String username) {
-		System.out.println("La partita accettata è stata rifiutata, ricarica la lista dei client");
-		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
-		gameAccepted = false;
+	public void handleResultDeclined(String opponentName) {
+		sentRequests.getChildren().removeIf(node -> opponentName.equals(node.getUserData()));
 	}
 	
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	/// 
-	public void addIncomingRequest(String username) {
-        HBox card = new HBox(15);
-        card.getStyleClass().add("request-card");
-        card.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+	/// GESTIONE DELLA LISTA DELLE RICHIESTE RICEVUTE
+	///
+	public void addIncomingRequest(String opponentName) { // Cambiato nome per chiarezza
+	    HBox card = new HBox(15);
+	    card.getStyleClass().add("request-card");
+	    card.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        Text msg = new Text(username + " wants to play!");
-        msg.getStyleClass().add("text-player-name");
+	    Text msg = new Text(opponentName + " wants to play!");
+	    msg.getStyleClass().add("text-player-name");
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+	    Region spacer = new Region();
+	    HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button acceptBtn = new Button("Accept");
-        acceptBtn.getStyleClass().add("button-accept");
-        acceptBtn.setOnAction(e -> handleAcceptRequest(username));
-        
-        Button declineBtn = new Button("Decline");
-        declineBtn.getStyleClass().add("button-reject");
-        declineBtn.setOnAction(e -> handleDeclineRequest(username));
+	    Button acceptBtn = new Button("Accept");
+	    acceptBtn.getStyleClass().add("button-accept");
+	    
+	    // Forza la lambda a usare opponentName specifico di questa card
+	    acceptBtn.setOnAction(e -> handleAcceptRequest(opponentName)); 
+	    
+	    Button declineBtn = new Button("Decline");
+	    declineBtn.getStyleClass().add("button-reject");
+	    declineBtn.setOnAction(e -> handleDeclineRequest(opponentName));
 
-        card.getChildren().addAll(msg, spacer, acceptBtn, declineBtn);
-        
-        card.setUserData(username);
-        
-        incomingRequests.getChildren().add(card);
-    }
+	    card.getChildren().addAll(msg, spacer, acceptBtn, declineBtn);
+	    
+	    // Salviamo l'opponentName anche nei UserData come backup
+	    card.setUserData(opponentName);
+	    
+	    incomingRequests.getChildren().add(card);
+	}
 	
-	public void removeIncomingRequest(String username) {
+	public void removeIncomingRequest(String opponentName) {
 		//Rimuove solo la richiesta inviata con quell'username
-		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
+		incomingRequests.getChildren().removeIf(node -> opponentName.equals(node.getUserData()));
 	}
 	
-	private void handleDeclineRequest(String username) {
-		sendQueue.insert(new ChallengeResponse(ChallengeResponseStatus.refused, username));
-		incomingRequests.getChildren().removeIf(node -> username.equals(node.getUserData()));
+	public void removeAllIncomingRequest() {
+		incomingRequests.getChildren().clear();
 	}
 	
-	private void handleAcceptRequest(String username) {
+
+	//Declino di una richiesta
+	private void handleDeclineRequest(String opponentName) {
+		sendQueue.insert(new ChallengeResponse(ChallengeResponseStatus.refused, opponentName));
+		incomingRequests.getChildren().removeIf(node -> opponentName.equals(node.getUserData()));
+	}
+	
+	//Accettamento di una richiesta
+	private void handleAcceptRequest(String opponentName) {
 		if(gameAccepted) {
 			handleGameJustAccepted();
 			return;
 		}
 		
-		sendQueue.insert(new ChallengeResponse(ChallengeResponseStatus.ok, username));
+		
+		sendQueue.insert(new ChallengeResponse(ChallengeResponseStatus.ok, opponentName));
 		gameAccepted = true;
 	}
     
+	//Funzione che viene avviata quando, dopo aver accettato una richiesta, l'avversario non è più disponibile
+	public void handleClientAcceptedNotFound(String opponentName) {
+		
+		Notification.showPopUp(MainApplication.getStage().getScene(), "La partita accettata è stata rifiutata, ricarica la lista dei client");
+		incomingRequests.getChildren().removeIf(node -> opponentName.equals(node.getUserData()));
+		gameAccepted = false;
+	}
+	
 	private void handleGameJustAccepted() {
-		System.out.println("Gioco appena accettato non eseguire questa operazione");
+		Notification.showPopUp(MainApplication.getStage().getScene(), "Gioco appena accettato non eseguire questa operazione");
 		
 	}
 
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	
+	/// GESTIONE DEL CAMBIO NOME
     
 	@FXML
     private void handleUpdateName() {
@@ -224,23 +272,27 @@ public class LobbyController {
     }
     
     public void updateUsername() {
-    	refuseAllIncomingRequest();
+    	//Pulisco qualsiasi richiesta mostrata a schermo
+    	removeAllSentRequest();
+    	removeAllIncomingRequest();
     	currentNameLabel.setText(newUsername);
+    	username = newUsername;
+    	nameSended = false;
     	
     }
     
     public void handleUsernameTaken() {
-    	System.out.println("L'username inserito è già stato preso");
+    	Notification.showPopUp(MainApplication.getStage().getScene(), "L'username inserito è già stato preso");
+    	nameSended = false;
     }
 
 	private void handleNameSended() {
-		System.out.println("Il server sta ancora elaborando la precedente risposta aspetta un attimo");
+		Notification.showPopUp(MainApplication.getStage().getScene(), "Il server sta ancora elaborando la precedente risposta aspetta un attimo");
 		
 	}
 	
-	/////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public void refuseAllIncomingRequest() {
-		
+	public String getUsername() {
+		return this.username;
 	}
+	
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Random;
 
 import data.*;
@@ -137,13 +138,20 @@ public class ClientHandler extends Thread implements Runnable{
 	private ChangeUsernameResponse handleChangeUsernameRequest(Message generalMsg) {
 		ChangeUsernameRequest msg = (ChangeUsernameRequest) generalMsg;
 		
-		//Controllo che l'username non è stato già preso
-		if(clientList.isClientInList(msg.getNewUsername())) {
-			return (new ChangeUsernameResponse(ChangeUsernameResult.taken));
+		synchronized(clientList) {
+			//Controllo che l'username non è stato già preso
+			if(clientList.isClientInList(msg.getNewUsername())) {
+				return (new ChangeUsernameResponse(ChangeUsernameResult.taken));
+			}
+			
+			//Rifiuto tutte le richieste collegate a quel nome
+			for(PendingRequest p : pendingRequestList.popPendingRequests(client))
+				refusePendingRequest(p,client);
+			
+			client.setUsername(msg.getNewUsername());
+			return (new ChangeUsernameResponse(ChangeUsernameResult.ok));
 		}
 		
-		client.setUsername(msg.getNewUsername());
-		return (new ChangeUsernameResponse(ChangeUsernameResult.ok));
 	}
 
 	
@@ -161,6 +169,9 @@ public class ClientHandler extends Thread implements Runnable{
 		if(pendingRequestList.isInPendingRequestList(client, enemy)) {
 			return null;
 		}
+		
+		//Modifico la richiesta con il mio username
+		msg.setUsername(client.getUsername());
 		
 		pendingRequestList.push(client, enemy);
 		enemy.write(msg);
@@ -202,6 +213,15 @@ public class ClientHandler extends Thread implements Runnable{
 			client.setStatus(Status.in_game);
 			enemy.setStatus(Status.in_game);
 			pendingRequestList.remove(enemy, client);
+			
+			//Rifiuto tutte le richieste che riguardano quei due client
+			
+			for(PendingRequest p : pendingRequestList.popPendingRequests(client))
+				refusePendingRequest(p,client);
+			
+			for(PendingRequest p : pendingRequestList.popPendingRequests(enemy))
+				refusePendingRequest(p,client);
+			
 		}
 		
 		//Qui non è necessario inserire un blocco sincronizzato visto che una volta arrivato a questo punto i client sono 
@@ -226,6 +246,17 @@ public class ClientHandler extends Thread implements Runnable{
 		return new ChallengeResult(ChallengeResultStatus.ok,clientMoveVale,enemy.getUsername());
 	}
 	
+	//TODO CONTROLLA SE È CORRETTO
+	private void refusePendingRequest(PendingRequest pendingRequest,Client client) {
+		
+		if(client == pendingRequest.getSender()) {
+			client.write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,pendingRequest.getSender().getUsername()));
+			return;
+		}
+		
+		pendingRequest.getSender().write(new ChallengeResult(ChallengeResultStatus.refused,MoveValue.none,client.getUsername()));
+		
+	}
 	
 	
 	

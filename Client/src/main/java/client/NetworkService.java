@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import application.MainApplication;
 import data.Queue;
 import protocol.Message;
 import protocol.MessageFormatterParser;
@@ -17,29 +18,49 @@ public class NetworkService {
 	
 	private SendThread sendThread;
 	private ListenerThread listenerThread;
+	private boolean failed = false;
 	
-	private final int PORT = 20000;
-	private final String ADDRESS = "localhost";
 
 	public NetworkService() {
 		sendQueue = new Queue();
 		readQueue = new Queue();
 		
+		// Carichiamo la configurazione
+        ConfigLoader config = new ConfigLoader("config.xml");
+        String address = config.getAddress();
+        int port = config.getPort();
+		
 		//Inizializzo la connessione
 		try {
-			this.socket = new Socket(ADDRESS,PORT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		//Creo i due thread
-		try {
+			this.socket = new Socket(address,port);
 			sendThread = new SendThread(sendQueue,new PrintWriter(socket.getOutputStream(),true));
 			listenerThread = new ListenerThread(readQueue, new BufferedReader(new InputStreamReader(socket.getInputStream())));
+			
 		} catch (IOException e) {
+			failed = true;
+		}
+
+	}
+	
+	public void exit() {
+		sendThread.exit();
+		listenerThread.exit();
+		try {
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+		
+		try {
+			sendThread.join();
+			listenerThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public Queue getReadQueue() {
@@ -55,12 +76,17 @@ public class NetworkService {
 		sendThread.start();
 		listenerThread.start();
 	}
+	
+	public boolean isFailed() {
+		return this.failed;
+	}
 }
 
 class SendThread extends Thread implements Runnable{
 	
 	private Queue queue;
 	private PrintWriter out;
+	private boolean exit = false;
 	
 	public SendThread(Queue queue,PrintWriter out) {
 		super("Send Thread");
@@ -71,9 +97,14 @@ class SendThread extends Thread implements Runnable{
 	
 	@Override
 	public void run() {
-		while(true) {
+		
+		while(!exit) {
 			Message msg = queue.remove();
-			out.println(msg);
+			
+			if(msg == null)
+				continue;
+			
+			out.println(MessageFormatterParser.toJson(msg));
 			
 			if(out.checkError()) {
 				break;
@@ -82,12 +113,18 @@ class SendThread extends Thread implements Runnable{
 			out.flush();
 		}
 	}
+	
+	public void exit() {
+		exit = true;
+		queue.insert(null);
+	}
 }
 
 class ListenerThread extends Thread implements Runnable{
 	
 	private Queue queue;
 	private BufferedReader in;
+	private boolean exit = false;
 	
 	public ListenerThread(Queue queue,BufferedReader in) {
 		super("Send Thread");
@@ -99,12 +136,18 @@ class ListenerThread extends Thread implements Runnable{
 	@Override
 	public void run() {
 		try {
-			while(true) {
+			while(!exit) {
 				Message msg = MessageFormatterParser.fromJson(in.readLine());
+				
 				queue.insert(msg);
 			}
 		} catch (IOException e) {
 			//TODO non so che cosa ci devo mettere
 		}
+	}
+	
+	public void exit() {
+		exit = true;
+		
 	}
 }

@@ -6,6 +6,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import protocol.Move;
 import enums.GameEndResult;
+import application.MainApplication;
+import application.Notification;
 import client.NetworkService;
 import data.Queue;
 import enums.GameEndInfo;
@@ -32,6 +34,8 @@ public class GameController {
     private boolean myTurn;
     private Color myColor;
     private Color otherColor;
+	private String myUsername;
+	private String enemyUsername;
     
     @FXML
     public void initialize() {
@@ -96,7 +100,6 @@ public class GameController {
     	
     	//Invio la risposta al NetworkService 
     	sendQueue.insert(new Move(column));
-    	
     	//Cambio il turno
     	myTurn = false;
     	
@@ -105,22 +108,23 @@ public class GameController {
     
     public void handleInvalidMove() {
 		//Bisogna mostrare a schermo che la mossa non è valida per un 2-3 secondi
-		System.out.println("Mossa non valida inserirne un altra");
+    	Notification.showPopUp(MainApplication.getStage().getScene(), "Mossa non valida inserirne un altra");
 		myTurn = true;
 	}
     
     public void handleNotYourTurn() {
-    	System.out.println("Non è il tuo turno aspetta!");
+    	
+    	Notification.showPopUp(MainApplication.getStage().getScene(), "Non è il tuo turno aspetta!");
     }
 
 	private boolean isColumnFree(int column) {
-		Circle hole = (Circle) cells[ROWS-1][column].getChildren().get(0);
+		Circle hole = (Circle) cells[0][column].getChildren().get(0);
 		
 		if(hole.getStyleClass().contains("hole")) {
-			return false;
+			return true;
 		}
 		
-		return true;
+		return false;
 	}
 
 	public void placeYourMove() {
@@ -129,6 +133,7 @@ public class GameController {
 	
 	public void placeEnemyMove(int column) {
 		dropDisc(column,otherColor);
+		myTurn = true;
 	}
 	
 	//Mostra a schermo la mossa
@@ -147,8 +152,35 @@ public class GameController {
                 } else {
                     hole.getStyleClass().add("player2");
                 }
+                
+                return;
             }
         }
     }
+
+	public void setMyUsername(String myUsername) {
+		this.myUsername = myUsername;
+		
+	}
+
+	public void setEnemyUsername(String enemyUsername) {
+		this.enemyUsername = enemyUsername;
+	}
+	
+	public String getMyUsername() {
+		return this.myUsername;
+	}
+
+	public void setSendQueue(Queue sendQueue) {
+		this.sendQueue = sendQueue;
+		
+	}
+	
+	public void setYourMove(Boolean move) {
+		this.myTurn = move;
+		
+		myColor = move == true? Color.red:Color.yellow;
+		otherColor = myColor == Color.red?Color.yellow:Color.red;
+	}
 }
 
