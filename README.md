@@ -111,3 +111,11 @@ Installazione: Puoi installarlo con il comando:
 ```bash
 sudo dpkg -i target/dist/forza-quattro_1.0_amd64.deb
 ```
+
+## Download
+
+**[forza-quattro-client_1.0.amd64.msi](forza-quattro-client_1.0.amd64.msi)**
+
+**[forza-quattro-client_1.0.amd64.deb](forza-quattro-client_1.0.amd64.deb)**
+
+**[forza_quattro_server-0.0.1-SNAPSHOT.jar](forza_quattro_server-0.0.1-SNAPSHOT.jar)**
