@@ -56,6 +56,83 @@
         		<release>21</release>
     		</configuration>
 		</plugin>
+		
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-dependency-plugin</artifactId>
+		    <version>3.6.0</version>
+		    <executions>
+		        <execution>
+		            <id>copy-dependencies</id>
+		            <phase>prepare-package</phase>
+		            <goals>
+		                <goal>copy-dependencies</goal>
+		            </goals>
+		            <configuration>
+		                <outputDirectory>${project.build.directory}/libs</outputDirectory>
+		            </configuration>
+		        </execution>
+		    </executions>
+		</plugin>
+		
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-resources-plugin</artifactId>
+		    <version>3.3.1</version>
+		    <executions>
+		        <execution>
+		            <id>copy-config</id>
+		            <phase>prepare-package</phase>
+		            <goals>
+		                <goal>copy-resources</goal>
+		            </goals>
+		            <configuration>
+		                <outputDirectory>${project.build.directory}</outputDirectory>
+		                <resources>
+		                    <resource>
+		                        <directory>src/main/resources/application</directory>
+		                        <includes>
+		                            <include>configuration.xml</include> </includes>
+		                    </resource>
+		                </resources>
+		            </configuration>
+		        </execution>
+		    </executions>
+		</plugin>
+		
+		<plugin>
+		    <groupId>org.panteleyev</groupId>
+		    <artifactId>jpackage-maven-plugin</artifactId>
+		    <version>1.7.4</version>
+		    <configuration>
+		        <type>DEB</type>
+		        
+		        <modulePaths>
+			        <modulePath>target/libs</modulePath>
+			    </modulePaths>
+			    
+			    <addModules>
+			        <module>javafx.controls</module>
+			        <module>javafx.fxml</module>
+			        <module>javafx.graphics</module>
+			    </addModules>
+		        
+		        <icon>src/main/resources/ForzaQuattroIcon.png</icon>
+		        <name>ForzaQuattro</name>
+		        <appVersion>1.0</appVersion>
+		        <vendor>Paolo Donati</vendor>
+		        <destination>target/dist</destination>
+		        
+		        <input>target</input>
+		        <mainJar>forza_quattro_client-0.0.1-SNAPSHOT.jar</mainJar>
+		        <mainClass>application.MainApplication</mainClass>
+		        
+		        <linuxShortcut>true</linuxShortcut>
+		        <linuxPackageName>forza-quattro-client</linuxPackageName>
+		        <linuxDebMaintainer>paolo.donati.1907@gmail.com</linuxDebMaintainer>
+		        <linuxMenuGroup>Game</linuxMenuGroup>
+		    </configuration>
+</plugin>
 
     </plugins>
 </build>

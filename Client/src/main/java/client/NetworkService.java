@@ -26,7 +26,7 @@ public class NetworkService {
 		readQueue = new Queue();
 		
 		// Carichiamo la configurazione
-        ConfigLoader config = new ConfigLoader("src/main/resources/configuration.xml");
+        ConfigLoader config = new ConfigLoader();
         String address = config.getAddress();
         int port = config.getPort();
 		
