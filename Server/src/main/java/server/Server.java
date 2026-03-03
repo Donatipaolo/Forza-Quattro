@@ -25,7 +25,7 @@ public class Server extends Thread implements Runnable{
 		
 		this.clientList = clientlist;
 		
-		configLoader = new ConfigLoader("src/main/resources/configuration.xml");
+		configLoader = new ConfigLoader();
 		
 		
 		try {
