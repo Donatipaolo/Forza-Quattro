@@ -42,6 +42,7 @@ public class GameController {
     //La griglia da stampare
     private StackPane[][] cells = new StackPane[ROWS][COLS];
 
+    private boolean gameFinished = false;
     private boolean myTurn;
     private Color myColor;
     private Color otherColor;
@@ -111,6 +112,11 @@ public class GameController {
     }
     
     private void newMove(int column) {
+    	
+    	if(gameFinished) {
+    		return;
+    	}
+    	
     	//Controlla se è il tuo turno
     	if(!myTurn) {
     		handleNotYourTurn();
@@ -122,6 +128,9 @@ public class GameController {
     		handleInvalidMove();
     		return;
     	}
+    	
+    	
+		
     	
     	//Invio la risposta al NetworkService 
     	sendQueue.insert(new Move(column));
@@ -213,8 +222,9 @@ public class GameController {
 	}
 
 	public void showGameEnded() {
-                turnStatusLabel.setText("GAME ENDED");
-                turnStatusLabel.setStyle("-fx-text-fill: #ffff00;");
+		gameFinished = true;
+		turnStatusLabel.setText("GAME ENDED");
+        turnStatusLabel.setStyle("-fx-text-fill: #ffff00;");
 	}
 	
 	

@@ -59,11 +59,13 @@ public class MainApplication extends Application {
 
     public static void showLobby(String username,Queue sendQueue) {
         LobbyScene lobby = new LobbyScene(username,sendQueue);
+        Double oldStageHeight = primaryStage.getHeight();
+        Double oldStageWidth = primaryStage.getWidth();
         primaryStage.setScene(lobby.getScene());
         primaryStage.setTitle("ForzaQuattro - Lobby");
         CurrentController.controller = lobby.getController();
-        primaryStage.setHeight(750);
-        primaryStage.setWidth(1000);
+        primaryStage.setHeight(oldStageHeight);
+        primaryStage.setWidth(oldStageWidth);
         primaryStage.setMinHeight(750);
         primaryStage.setMinWidth(1000);
         primaryStage.show();
@@ -71,11 +73,13 @@ public class MainApplication extends Application {
     
     public static void showGameEnd(GameEndResult result, GameEndInfo extraInfo,String username, Queue sendQueue) {
     	GameEndScene gameEndScene = new GameEndScene(result,extraInfo,username,sendQueue);
+    	Double oldStageHeight = primaryStage.getHeight();
+        Double oldStageWidth = primaryStage.getWidth();
         primaryStage.setScene(gameEndScene.getScene());
         primaryStage.setTitle("ForzaQuattro - Game");
         CurrentController.controller = gameEndScene.getController();
-        primaryStage.setHeight(700);
-        primaryStage.setWidth(700);
+        primaryStage.setHeight(oldStageHeight);
+        primaryStage.setWidth(oldStageWidth);
         primaryStage.setMinHeight(700);
         primaryStage.setMinWidth(700);
         primaryStage.show();
@@ -83,11 +87,13 @@ public class MainApplication extends Application {
     
     public static void showGame(String myUsername, String enemyUsername,Queue sendQueue){
     	GameScene gameScene = new GameScene(myUsername,enemyUsername,sendQueue);
+    	Double oldStageHeight = primaryStage.getHeight();
+        Double oldStageWidth = primaryStage.getWidth();
         primaryStage.setScene(gameScene.getScene());
         primaryStage.setTitle("ForzaQuattro - Game");
         CurrentController.controller = gameScene.getController();
-        primaryStage.setHeight(800);
-        primaryStage.setWidth(800);
+        primaryStage.setHeight(oldStageHeight);
+        primaryStage.setWidth(oldStageWidth);
         primaryStage.setMinHeight(800);
         primaryStage.setMinWidth(800);
         primaryStage.show();
@@ -95,11 +101,13 @@ public class MainApplication extends Application {
     
     public static void showServerErrorScene() {
     	ServerErrorScene serverErrorScene = new ServerErrorScene();
+    	Double oldStageHeight = primaryStage.getHeight();
+        Double oldStageWidth = primaryStage.getWidth();
     	primaryStage.setScene(serverErrorScene.getScene());
         primaryStage.setTitle("ForzaQuattro - Game");
         CurrentController.controller = serverErrorScene.getController();
-        primaryStage.setHeight(700);
-        primaryStage.setWidth(700);
+        primaryStage.setHeight(oldStageHeight);
+        primaryStage.setWidth(oldStageWidth);
         primaryStage.setMinHeight(700);
         primaryStage.setMinWidth(700);
         primaryStage.show();

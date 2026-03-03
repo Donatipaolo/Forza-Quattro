@@ -287,7 +287,7 @@ public class ClientController extends Thread implements Runnable{
     		
     		 GameController controller = (GameController) CurrentController.controller;
 
-    	        // Mostra subito stato fine partita
+    	        // Mostra subito stato fine partita 
     	        controller.showGameEnded();
 
     	        // Delay di 3 secondi
