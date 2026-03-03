@@ -4,7 +4,6 @@
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>tepsit.forzaquattro</groupId>
     <artifactId>forza_quattro_client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -15,35 +14,28 @@
         <javafx.version>21</javafx.version>
     </properties>
 
-    <!-- ================= DEPENDENCIES ================= -->
     <dependencies>
-
-        <!-- JavaFX (senza classifier, li mettiamo nei profili) -->
+        <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
-
     </dependencies>
 
-    <!-- ================= BUILD ================= -->
     <build>
         <plugins>
-
             <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -85,32 +77,33 @@
                 </executions>
             </plugin>
 
+            <!-- Copia le librerie JavaFX in target/libs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.7.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-javafx</id>
+                        <phase>package</phase>
+                        <goals><goal>copy-dependencies</goal></goals>
+                        <configuration>
+                            <includeGroupIds>org.openjfx</includeGroupIds>
+                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
-    <!-- ================= PROFILES ================= -->
     <profiles>
 
-        <!-- ===== LINUX ===== -->
+        <!-- ===== WINDOWS ===== -->
         <profile>
-            <id>linux</id>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-controls</artifactId>
-                    <version>${javafx.version}</version>
-                    <classifier>linux</classifier>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-fxml</artifactId>
-                    <version>${javafx.version}</version>
-                    <classifier>linux</classifier>
-                </dependency>
-            </dependencies>
-
+            <id>windows</id>
             <build>
                 <plugins>
                     <plugin>
@@ -118,50 +111,55 @@
                         <artifactId>jpackage-maven-plugin</artifactId>
                         <version>1.7.4</version>
                         <configuration>
-
-                            <type>DEB</type>
-
+                            <type>MSI</type>
                             <name>ForzaQuattro</name>
                             <appVersion>1.0</appVersion>
                             <vendor>Paolo Donati</vendor>
-
-                            <input>${project.build.directory}</input>
-                            <mainJar>${project.build.finalName}.jar</mainJar>
-                            <mainClass>application.MainApplication</mainClass>
-
                             <destination>${project.build.directory}/dist</destination>
+                            
+                            <input>${project.build.directory}</input>
+                            <mainJar>forza_quattro_client-0.0.1-SNAPSHOT.jar</mainJar>
+                            <mainClass>application.MainApplication</mainClass>
+                            
+                            <modulePaths>
+                                <modulePath>${project.build.directory}/libs</modulePath>
+                                <modulePath>${java.home}/jmods</modulePath>
+                            </modulePaths>
+                            
+                            <addModules>
+                                <module>javafx.controls</module>
+                                <module>javafx.fxml</module>
+                                <module>javafx.graphics</module>
+                                <module>java.base</module>
+                                <module>java.sql</module> </addModules>
 
-                            <icon>src/main/resources/ForzaQuattroIcon.ico</icon>
-
-                            <linuxShortcut>true</linuxShortcut>
-                            <linuxMenuGroup>Game</linuxMenuGroup>
-
-                        </configuration>
+                            <winConsole>false</winConsole>
+                            <winDirChooser>true</winDirChooser>
+                            <winShortcut>true</winShortcut>
+                            <winMenu>true</winMenu>
+                            <winConsole>true</winConsole> </configuration>
                     </plugin>
                 </plugins>
             </build>
         </profile>
 
-        <!-- ===== WINDOWS ===== -->
+        <!-- ===== LINUX ===== -->
         <profile>
-            <id>windows</id>
-
+            <id>linux</id>
             <dependencies>
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-controls</artifactId>
                     <version>${javafx.version}</version>
-                    <classifier>win</classifier>
+                    <classifier>linux</classifier>
                 </dependency>
-
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-fxml</artifactId>
                     <version>${javafx.version}</version>
-                    <classifier>win</classifier>
+                    <classifier>linux</classifier>
                 </dependency>
             </dependencies>
-
             <build>
                 <plugins>
                     <plugin>
@@ -169,24 +167,20 @@
                         <artifactId>jpackage-maven-plugin</artifactId>
                         <version>1.7.4</version>
                         <configuration>
-
-                            <type>EXE</type>
-
+                            <type>DEB</type>
                             <name>ForzaQuattro</name>
                             <appVersion>1.0</appVersion>
                             <vendor>Paolo Donati</vendor>
-
                             <input>${project.build.directory}</input>
                             <mainJar>${project.build.finalName}.jar</mainJar>
                             <mainClass>application.MainApplication</mainClass>
-
                             <destination>${project.build.directory}/dist</destination>
-
                             <icon>src/main/resources/ForzaQuattroIcon.ico</icon>
+                            <linuxShortcut>true</linuxShortcut>
+                            <linuxMenuGroup>Game</linuxMenuGroup>
 
-                            <winShortcut>true</winShortcut>
-                            <winMenu>true</winMenu>
-                            <winMenuGroup>ForzaQuattro Games</winMenuGroup>
+                           <input>${project.build.directory}/libs</input>
+    					   <mainJar>../forza_quattro_client-0.0.1-SNAPSHOT.jar</mainJar>
 
                         </configuration>
                     </plugin>
@@ -195,5 +189,4 @@
         </profile>
 
     </profiles>
-
 </project>
