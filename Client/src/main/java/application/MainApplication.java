@@ -22,9 +22,22 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws Exception {
     	primaryStage = stage;
     	
-    	stage.getIcons().add(new javafx.scene.image.Image(
-    	        getClass().getResourceAsStream("/ForzaQuattroIcon.png")
-    	    ));
+    	try {
+    		stage.getIcons().add(new javafx.scene.image.Image(
+        	        getClass().getResourceAsStream("/ForzaQuattroIcon.png")
+        	    ));
+    	} catch(Exception ignored) {
+    		
+    	}
+    	
+    	try {
+    		stage.getIcons().add(new javafx.scene.image.Image(
+        	        getClass().getResourceAsStream("/ForzaQuattroIcon.ico")
+        	    ));
+    	} catch(Exception ignored) {
+    		
+    	}
+    	
     	
     	if(networkService.isFailed()) {
     		showServerErrorScene();

@@ -23,8 +23,7 @@ import enums.MessageType;
     @JsonSubTypes.Type(value = ChallengeResult.class, name = "challenge_result"),
     @JsonSubTypes.Type(value = Move.class, name = "move"),
     @JsonSubTypes.Type(value = MoveResult.class, name = "move_response"),
-    @JsonSubTypes.Type(value = GameEnd.class, name = "game_end"),
-    @JsonSubTypes.Type(value = Disconnect.class, name = "disconnect")
+    @JsonSubTypes.Type(value = GameEnd.class, name = "game_end")
 })
 
 

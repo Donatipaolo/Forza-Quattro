@@ -27,7 +27,6 @@ public class FunctionalTestProtocol {
 		toJsonTest(new Move(3));
 		toJsonTest(new MoveResult(MoveResultStatus.ok));
 		toJsonTest(new GameEnd(GameEndResult.won,GameEndInfo.game_ended));
-		toJsonTest(new Disconnect());
 		
 		
 		for(String json : list) {

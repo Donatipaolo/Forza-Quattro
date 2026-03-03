@@ -126,9 +126,6 @@ public class ClientHandler extends Thread implements Runnable{
             case move:
                 return handleMove(msg);
 
-            case disconnect:
-                return handleDisconnect(msg);
-
             default:
                 System.out.println("Unhandled message type in game: " + msgType);
                 return null;
@@ -286,17 +283,6 @@ public class ClientHandler extends Thread implements Runnable{
 		
 		// Il metodo insert gestisce gia tute le casistiche della partita (controllo validità, vittoria e messaggio da ritornare)
 		return session.insert(client,msg.getColumn());
-	}
-
-	private Message handleDisconnect(Message generalMsg) {
-		Disconnect msg = (Disconnect) generalMsg;
-		GameSession session = client.getGameSession();
-		
-		if(session != null) {
-	        session.disconnection(client);
-	    }
-		
-		return null;
 	}
 	
 }
