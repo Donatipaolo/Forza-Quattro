@@ -4,7 +4,6 @@
 
 .error-card {
     -fx-background-color: rgba(255, 50, 50, 0.05);
-    -fx-background-radius: 20;
     -fx-border-color: #ff5252;
     -fx-border-width: 2;
     -fx-padding: 50;

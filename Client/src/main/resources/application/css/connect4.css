@@ -33,7 +33,6 @@
 
 .info-panel {
     -fx-background-color: rgba(50, 50, 50, 0.8); /* Grigio scuro semitrasparente */
-    -fx-background-radius: 15;
     -fx-margin: 10;
 }
 

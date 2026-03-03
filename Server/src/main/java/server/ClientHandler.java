@@ -198,8 +198,8 @@ public class ClientHandler extends Thread implements Runnable{
 		Client enemy = clientList.getClient(msg.getUsername());
 		
 		// Controllo se il client è ancora online e se c'è un effettiva richiesta
-		if(enemy == null || pendingRequestList.isInPendingRequestList(client, enemy)) {
-			pendingRequestList.remove(client,enemy);
+		if(enemy == null || !pendingRequestList.isInPendingRequestList(enemy, client)) {
+			pendingRequestList.remove(enemy,client);
 			return new ChallengeResult(ChallengeResultStatus.client_not_found,MoveValue.none,enemy.getUsername());
 		}
 		

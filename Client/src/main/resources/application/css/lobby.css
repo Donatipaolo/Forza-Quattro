@@ -135,21 +135,21 @@
 }
 
 .button-refresh {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1); /* sfondo leggero */
     -fx-text-fill: white;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 50%; /* Lo rende circolare */
-    -fx-min-width: 35px;
-    -fx-min-height: 35px;
-    -fx-max-width: 35px;
-    -fx-max-height: 35px;
+    -fx-font-size: 16;
     -fx-cursor: hand;
-    -fx-border-color: rgba(255, 255, 255, 0.2);
-    -fx-border-radius: 50%;
+
+    -fx-background-radius: 50%;  /* rende il bottone circolare */
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+    -fx-max-width: 32px;
+    -fx-max-height: 32px;
+
+    -fx-alignment: center;
 }
 
 .button-refresh:hover {
     -fx-background-color: rgba(48, 79, 254, 0.4); /* Colore blu al passaggio */
     -fx-border-color: #304ffe;
-}
+	}

@@ -211,5 +211,13 @@ public class GameController {
 		myColor = move == true? Color.red:Color.yellow;
 		otherColor = myColor == Color.red?Color.yellow:Color.red;
 	}
+
+	public void showGameEnded() {
+                turnStatusLabel.setText("GAME ENDED");
+                turnStatusLabel.setStyle("-fx-text-fill: #ffff00;");
+	}
+	
+	
+	
 }
 

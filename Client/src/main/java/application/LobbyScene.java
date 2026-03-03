@@ -20,7 +20,7 @@ public class LobbyScene {
             Parent root = loader.load();
             
             // Crea la scena con le dimensioni specificate
-            this.scene = new Scene(root, 1000, 750);
+            this.scene = new Scene(root);
             this.controller = loader.getController();
             this.controller.setUsername(username);
             this.controller.setSendQueue(sendQueue);

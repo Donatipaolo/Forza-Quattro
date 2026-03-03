@@ -13,6 +13,8 @@ import application.MainApplication;
 import application.Controllers.GameController;
 import application.Controllers.LobbyController;
 import data.Queue;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 // ClientController coordina stato del client e comunicazione con NetworkService
 public class ClientController extends Thread implements Runnable{
@@ -169,18 +171,6 @@ public class ClientController extends Thread implements Runnable{
 	    		//Il server si occupa di rifiutare tutte le altre richieste
 	    	}
 	    	
-	    	//se viene rifiutata prima elimino la richiesta dalla lista di richieste
-	    	Platform.runLater(() -> {
-	    		
-	    		if(!(CurrentController.controller instanceof LobbyController)) {
-    				System.out.println("Errore instanza del controller sbagliata");
-    				return;
-    			}
-	    		
-			    if (CurrentController.controller != null) {
-			    	((LobbyController) CurrentController.controller).removeIncomingRequest(challengeRequest.getUsername());
-			    }
-			});
 	    	
 	    	if(challengeRequest.getStatus() == ChallengeResultStatus.refused) {
 	    		Platform.runLater(() -> {
@@ -206,6 +196,7 @@ public class ClientController extends Thread implements Runnable{
 	    			}
 	    			
 	    		    if (CurrentController.controller != null) {
+	    		    	((LobbyController) CurrentController.controller).removeIncomingRequest(challengeRequest.getUsername());
 	    		    	((LobbyController) CurrentController.controller).handleClientRequestedNotFound(challengeRequest.getUsername());
 	    		    }
 	    		});
@@ -294,9 +285,23 @@ public class ClientController extends Thread implements Runnable{
 				return;
 			}
     		
-    		//Mostro la scena della fine del gioco
-        	MainApplication.showGameEnd(gameEnd.getResult(),gameEnd.getInfo(),
-        			((GameController)CurrentController.controller).getMyUsername(),sendQueue);
+    		 GameController controller = (GameController) CurrentController.controller;
+
+    	        // Mostra subito stato fine partita
+    	        controller.showGameEnded();
+
+    	        // Delay di 3 secondi
+    	        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+    	        pause.setOnFinished(e -> {
+    	            MainApplication.showGameEnd(
+    	                gameEnd.getResult(),
+    	                gameEnd.getInfo(),
+    	                controller.getMyUsername(),
+    	                sendQueue
+    	            );
+    	        });
+
+    	        pause.play();
     	});
     	
 	}

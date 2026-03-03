@@ -2,6 +2,7 @@ package application;
 
 import java.io.IOException;
 
+import application.Controllers.GameController;
 import client.ClientController;
 import client.NetworkService;
 import data.Queue;
@@ -20,6 +21,10 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
     	primaryStage = stage;
+    	
+    	stage.getIcons().add(new javafx.scene.image.Image(
+    	        getClass().getResourceAsStream("/ForzaQuattroIcon.png")
+    	    ));
     	
     	if(networkService.isFailed()) {
     		showServerErrorScene();
@@ -55,32 +60,48 @@ public class MainApplication extends Application {
     public static void showLobby(String username,Queue sendQueue) {
         LobbyScene lobby = new LobbyScene(username,sendQueue);
         primaryStage.setScene(lobby.getScene());
-        primaryStage.setTitle("Game Lobby - Modern ");
+        primaryStage.setTitle("ForzaQuattro - Lobby");
         CurrentController.controller = lobby.getController();
+        primaryStage.setHeight(750);
+        primaryStage.setWidth(1000);
+        primaryStage.setMinHeight(750);
+        primaryStage.setMinWidth(1000);
         primaryStage.show();
     }
     
     public static void showGameEnd(GameEndResult result, GameEndInfo extraInfo,String username, Queue sendQueue) {
-        GameEndScene gameEndScene = new GameEndScene(result,extraInfo,username,sendQueue);
+    	GameEndScene gameEndScene = new GameEndScene(result,extraInfo,username,sendQueue);
         primaryStage.setScene(gameEndScene.getScene());
-        primaryStage.setTitle("Game End");
+        primaryStage.setTitle("ForzaQuattro - Game");
         CurrentController.controller = gameEndScene.getController();
+        primaryStage.setHeight(700);
+        primaryStage.setWidth(700);
+        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(700);
         primaryStage.show();
     }
     
     public static void showGame(String myUsername, String enemyUsername,Queue sendQueue){
     	GameScene gameScene = new GameScene(myUsername,enemyUsername,sendQueue);
         primaryStage.setScene(gameScene.getScene());
-        primaryStage.setTitle("Game");
+        primaryStage.setTitle("ForzaQuattro - Game");
         CurrentController.controller = gameScene.getController();
+        primaryStage.setHeight(800);
+        primaryStage.setWidth(800);
+        primaryStage.setMinHeight(800);
+        primaryStage.setMinWidth(800);
         primaryStage.show();
     }
     
     public static void showServerErrorScene() {
     	ServerErrorScene serverErrorScene = new ServerErrorScene();
     	primaryStage.setScene(serverErrorScene.getScene());
-        primaryStage.setTitle("Game");
+        primaryStage.setTitle("ForzaQuattro - Game");
         CurrentController.controller = serverErrorScene.getController();
+        primaryStage.setHeight(700);
+        primaryStage.setWidth(700);
+        primaryStage.setMinHeight(700);
+        primaryStage.setMinWidth(700);
         primaryStage.show();
     }
     
