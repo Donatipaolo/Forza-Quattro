@@ -133,7 +133,8 @@
                                 <module>java.base</module>
                                 <module>java.sql</module> </addModules>
 
-                            <winConsole>false</winConsole>
+							<icon>src\main\resources\ForzaQuattroIcon.ico</icon>
+
                             <winDirChooser>true</winDirChooser>
                             <winShortcut>true</winShortcut>
                             <winMenu>true</winMenu>
