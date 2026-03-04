@@ -94,7 +94,7 @@ Risultato: pacchetto `.deb` in `target/dist/forza-quattro_1.0_amd64.deb`
 
 ---
 
-## 📞 Download
+## Download
 
 ### Client Windows
 [![MSI Installer](https://img.shields.io/badge/Download-MSI-blue?style=for-the-badge)](forza-quattro-client_1.0.amd64.msi)
