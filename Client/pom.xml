@@ -138,7 +138,7 @@
                             <winDirChooser>true</winDirChooser>
                             <winShortcut>true</winShortcut>
                             <winMenu>true</winMenu>
-                            <winConsole>true</winConsole> </configuration>
+                            <winConsole>false</winConsole> </configuration>
                     </plugin>
                 </plugins>
             </build>

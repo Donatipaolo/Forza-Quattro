@@ -117,7 +117,7 @@ public class MainApplication extends Application {
     	Double oldStageHeight = primaryStage.getHeight();
         Double oldStageWidth = primaryStage.getWidth();
     	primaryStage.setScene(serverErrorScene.getScene());
-        primaryStage.setTitle("ForzaQuattro - Game");
+        primaryStage.setTitle("ForzaQuattro - Errore di connessione");
         CurrentController.controller = serverErrorScene.getController();
         primaryStage.setHeight(oldStageHeight);
         primaryStage.setWidth(oldStageWidth);

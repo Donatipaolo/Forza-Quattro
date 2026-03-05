@@ -231,6 +231,13 @@ public class ClientHandler extends Thread implements Runnable{
 			for(PendingRequest p : pendingRequestList.popPendingRequests(enemy))
 				refusePendingRequest(p,enemy);
 			
+			for(Client c : clientList) {
+				if(c == client || c == enemy) {
+					continue;
+				}
+				c.write(new PlayListResponse(clientList.getPlayerList()));
+			}
+			
 		}
 		
 		//Qui non è necessario inserire un blocco sincronizzato visto che una volta arrivato a questo punto i client sono 
@@ -281,8 +288,15 @@ public class ClientHandler extends Thread implements Runnable{
 		Move msg = (Move) generalMsg;
 		GameSession session = client.getGameSession();
 		
+		Message result = session.insert(client,msg.getColumn());
+		if(result.getType().equals(MessageType.game_end)){
+			for(Client c : clientList) {
+				c.write(new PlayListResponse(clientList.getPlayerList()));
+			}
+		}
+		
 		// Il metodo insert gestisce gia tute le casistiche della partita (controllo validità, vittoria e messaggio da ritornare)
-		return session.insert(client,msg.getColumn());
+		return result;
 	}
 	
 }

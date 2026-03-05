@@ -94,19 +94,6 @@ Risultato: pacchetto `.deb` in `target/dist/forza-quattro_1.0_amd64.deb`
 
 ---
 
-## Download
-
-### Client Windows
-[![MSI Installer](https://img.shields.io/badge/Download-MSI-blue?style=for-the-badge)](forza-quattro-client_1.0.amd64.msi)
-
-### Client Linux
-[![DEB Installer](https://img.shields.io/badge/Download-DEB-green?style=for-the-badge)](forza-quattro-client_1.0.amd64.deb)
-
-### Server
-[![JAR Server](https://img.shields.io/badge/Download-JAR-red?style=for-the-badge)](forza_quattro_server-0.0.1-SNAPSHOT.jar)
-
----
-
 ## 📝 Documentazione e Manuale
 
 - [Manuale Utenti](Manuale%20Utenti.pdf)  

@@ -2,4 +2,5 @@
 *.classpath
 *.project
 Client/bin/
+Server/bin/
 /target/

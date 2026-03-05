@@ -8,6 +8,7 @@ import java.net.Socket;
 
 import application.MainApplication;
 import data.Queue;
+import javafx.application.Platform;
 import protocol.Message;
 import protocol.MessageFormatterParser;
 
@@ -158,7 +159,9 @@ class ListenerThread extends Thread implements Runnable{
 				queue.insert(msg);
 			}
 		} catch (IOException e) {
-			//TODO non so che cosa ci devo mettere
+			Platform.runLater(()->{
+				MainApplication.showServerErrorScene();
+			});
 		}
 	}
 	
