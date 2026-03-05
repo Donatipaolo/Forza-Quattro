@@ -24,7 +24,7 @@
         
         <HBox alignment="CENTER" spacing="10" styleClass="glass-panel">
             <TextField fx:id="nameField" promptText="Enter new name..." />
-            <Button text="Update" onAction="#handleUpdateName" styleClass="button-primary"/>
+            <Button text="Update Name" onAction="#handleUpdateName" styleClass="button-primary"/>
         </HBox>
     </HBox>
 	</top>
