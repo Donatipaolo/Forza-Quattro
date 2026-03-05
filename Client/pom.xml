@@ -145,49 +145,65 @@
         </profile>
 
         <!-- ===== LINUX ===== -->
-        <profile>
-            <id>linux</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-controls</artifactId>
-                    <version>${javafx.version}</version>
-                    <classifier>linux</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>org.openjfx</groupId>
-                    <artifactId>javafx-fxml</artifactId>
-                    <version>${javafx.version}</version>
-                    <classifier>linux</classifier>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.panteleyev</groupId>
-                        <artifactId>jpackage-maven-plugin</artifactId>
-                        <version>1.7.4</version>
-                        <configuration>
-                            <type>DEB</type>
-                            <name>ForzaQuattro</name>
-                            <appVersion>1.0</appVersion>
-                            <vendor>Paolo Donati</vendor>
-                            <input>${project.build.directory}</input>
-                            <mainJar>${project.build.finalName}.jar</mainJar>
-                            <mainClass>application.MainApplication</mainClass>
-                            <destination>${project.build.directory}/dist</destination>
-                            <icon>src/main/resources/ForzaQuattroIcon.ico</icon>
-                            <linuxShortcut>true</linuxShortcut>
-                            <linuxMenuGroup>Game</linuxMenuGroup>
-
-                           <input>${project.build.directory}/libs</input>
-    					   <mainJar>../forza_quattro_client-0.0.1-SNAPSHOT.jar</mainJar>
-
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+		<profile>
+		    <id>linux</id>
+		
+		    <!-- Dipendenze JavaFX Linux -->
+		    <dependencies>
+		        <dependency>
+		            <groupId>org.openjfx</groupId>
+		            <artifactId>javafx-controls</artifactId>
+		            <version>${javafx.version}</version>
+		            <classifier>linux</classifier>
+		        </dependency>
+		        <dependency>
+		            <groupId>org.openjfx</groupId>
+		            <artifactId>javafx-fxml</artifactId>
+		            <version>${javafx.version}</version>
+		            <classifier>linux</classifier>
+		        </dependency>
+		    </dependencies>
+		
+		    <build>
+		        <plugins>
+		            <plugin>
+		                <groupId>org.panteleyev</groupId>
+		                <artifactId>jpackage-maven-plugin</artifactId>
+		                <version>1.7.4</version>
+		                <configuration>
+		                    <type>DEB</type>
+		                    <name>ForzaQuattro</name>
+		                    <appVersion>1.0</appVersion>
+		                    <vendor>Paolo Donati</vendor>
+		
+		                    <!-- Jar principale modulare -->
+		                    <input>${project.build.directory}</input>
+		                    <mainJar>${project.build.finalName}.jar</mainJar>
+		                    <mainClass>application.MainApplication</mainClass>
+		                    <destination>${project.build.directory}/dist</destination>
+		
+		                    <icon>src/main/resources/ForzaQuattroIcon.png</icon>
+		                    <linuxShortcut>true</linuxShortcut>
+		                    <linuxMenuGroup>Game</linuxMenuGroup>
+		
+		                    <!-- Moduli e librerie -->
+		                    <modulePaths>
+		                        <modulePath>${project.build.directory}/libs</modulePath>
+		                        <modulePath>${java.home}/jmods</modulePath>
+		                    </modulePaths>
+		
+		                    <addModules>
+		                        <module>javafx.controls</module>
+		                        <module>javafx.fxml</module>
+		                        <module>javafx.graphics</module>
+		                        <module>java.base</module>
+		                        <module>java.sql</module>
+		                    </addModules>
+		                </configuration>
+		            </plugin>
+		        </plugins>
+		    </build>
+		</profile>
 
     </profiles>
 </project>
