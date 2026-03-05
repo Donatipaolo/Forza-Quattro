@@ -99,5 +99,5 @@ Risultato: pacchetto `.deb` in `target/dist/forza-quattro_1.0_amd64.deb`
 - [Manuale Utenti](Manuale%20Utenti.pdf)  
   Guida completa all'utilizzo del gioco e delle funzionalità.
 
-- [Documentazione Forza Quattro](Documentazione-Forza-Quattro.pdf)
+- [Documentazione Forza Quattro](Documentazione-Forza-Quattro.pdf)                   
   Approfondimenti
